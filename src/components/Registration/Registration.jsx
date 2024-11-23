@@ -79,7 +79,7 @@ function RegisterForm() {
 
   return (
     <div className="md:flex items-center md:m-0 m-4 md:mt-0 mt-5">
-      <div className="md:w-1/2 md:h-full md:pl-[190px]">
+      <div className="md:w-1/2 md:pl-[190px]">
         <h2 className="md:text-[34px] text-[22px] text-center font-bold md:text-left font-nuni text-[#11175D] md:leading-[47px] pb-[13px]">
           Get started with easily register
         </h2>
