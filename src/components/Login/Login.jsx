@@ -3,6 +3,7 @@ import { useState } from "react";
 import login from "../../assets/login.png";
 import google from "../../assets/google.svg";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import logo from "../../assets/logo.png";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,13 +14,11 @@ const Login = () => {
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
 
-  // EMAIL VALIDATION
   const handleEmail = (e) => {
     setEmail(e.target.value);
     setEmailError("");
   };
 
-  // PASSWORD VALIDATION
   const handlePassword = (e) => {
     setPassword(e.target.value);
     setPasswordError("");
@@ -60,30 +59,34 @@ const Login = () => {
     }
     setPasswordError("");
   };
+
   return (
-    <section>
-      <div className="md:flex items-center md:m-0 m-4 md:mt-0 mt-5">
-        <div className="md:w-1/2 md:ml-[180px]">
-          <h1 className="text-[#03014C] md:text-left text-center md:text-[34px] text-[22px] font-bold font-open md:leading-[45px] pb-[30px]">
+    <section className="min-h-screen flex flex-col lg:flex-row items-center lg:justify-between bg-cover bg-center bg-no-repeat md:bg-mobile">
+      <div className="lg:w-1/2 w-full flex flex-col items-center md:pt-10 lg:pt-0">
+        <img
+          className="absolute md:top-5 top-3 w-[100px] md:w-[130px] lg:l-[10%]"
+          src={logo}
+          alt="#logo"
+        />
+        <div className="bg-[#e5e5e5] mt-[150px] lg:mt-0 backdrop-blur-xl opacity-85 rounded-2xl w-[90%] md:w-[600px] lg:w-[500px] h-auto p-6 flex flex-col items-center">
+          <h1 className="text-[22px] md:text-[34px] text-center font-bold font-nuni text-[#11175D] pb-5">
             Login to your account!
           </h1>
-          <button className="group flex mx-auto md:mx-0 hover:border-[#5F35F5] duration-500 py-[22px] pl-[30px] items-center gap-2 border-[1px] border-[#b3b3c9] rounded-[8px] w-[220px] mb-[35px]">
+          <button className="group flex items-center justify-center gap-2 md:py-[26px] py-4 w-[220px] border border-gray-300 rounded-lg mb-5 hover:border-[#5F35F5] transition duration-300">
             <img
-              className="group-hover:rotate-[360deg] duration-500"
+              className="group-hover:rotate-[360deg] transition-transform duration-500"
               src={google}
               alt="#google"
             />
-            <p className="text-[#03014C] text-[14px] font-semibold font-open leading-[18px]">
-              Login with Google
-            </p>
+            <p className="text-[#03014C] font-semibold text-sm">Login with Google</p>
           </button>
           {/* Email Field */}
-          <div className="relative mb-[35px]">
+          <div className="relative w-full md:w-[300px] mb-5">
             <label
-              className={`absolute left-8 px-1 text-sm transition-all duration-200 ${
+              className={`absolute left-4 px-1 text-sm transition-all ${
                 email || emailFocused
-                  ? "-top-[10px] px-4 bg-white text-[#5F35F5]"
-                  : "top-[30px] text-gray-500"
+                  ? "-top-2 bg-[#e5e5e5] text-[#5F35F5]"
+                  : "top-4 md:top-7 text-gray-500"
               }`}
             >
               Email Address
@@ -94,18 +97,17 @@ const Login = () => {
               onChange={handleEmail}
               onFocus={() => setEmailFocused(true)}
               onBlur={() => setEmailFocused(false)}
-              className="border border-gray-300 md:w-[368px] w-full pl-[52px] py-[26px] rounded-[8px] focus:outline-[#5F35F5]"
+              className="w-full border border-gray-300 bg-[#E5E5E5] md:py-[26px] md:pl-[52px] p-4 rounded-lg focus:outline-[#5F35F5]"
             />
-            <p className="absolute uppercase top-[100%] left-[2%] font-nuni font-bold text-base text-red-600">{emailError}</p>
+            {emailError && <p className="text-red-600 text-sm">{emailError}</p>}
           </div>
           {/* Password Field */}
-
-          <div className="relative mb-[50px]">
+          <div className="relative w-full md:w-[300px] mb-5">
             <label
-              className={`absolute left-8 px-1 text-sm transition-all duration-200 ${
+              className={`absolute left-4 px-1 text-sm transition-all ${
                 password || passwordFocused
-                  ? "-top-[10px] px-4 bg-white text-blue-900"
-                  : "top-[30px] text-gray-500"
+                  ? "-top-2 bg-[#e5e5e5] text-blue-900"
+                  : "top-4 md:top-7 text-gray-500"
               }`}
             >
               Password
@@ -116,41 +118,42 @@ const Login = () => {
               onChange={handlePassword}
               onFocus={() => setPasswordFocused(true)}
               onBlur={() => setPasswordFocused(false)}
-              className="border border-gray-300 md:w-[368px] w-full pl-[52px] py-[26px] rounded-[8px] focus:outline-[#5F35F5]"
+              className="w-full border border-gray-300 bg-[#E5E5E5] md:py-[26px] md:pl-[52px] p-4 rounded-lg focus:outline-[#5F35F5]"
             />
             <button
               type="button"
-              className="absolute inset-y-0 md:left-[320px] md:right-0 right-[20px] flex items-center px-3 text-[20px] text-gray-500"
+              className="absolute inset-y-0 right-4 flex items-center text-gray-500"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
+              {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
             </button>
-            <p className="absolute uppercase top-[100%] left-[2%] font-nuni font-bold text-base text-red-600">{passwordError}</p>
+            {passwordError && (
+              <p className="text-red-600 text-sm">{passwordError}</p>
+            )}
           </div>
           <button
             onClick={handleLogin}
-            className="md:w-[368px] w-full py-[20px] bg-[#5F35F5] text-white rounded-[8px] duration-500 text-[20px] font-nuni font-semibold hover:bg-purple-700 focus:outline-none "
+            className="w-full md:w-[300px] md:py-[26px] py-4 bg-[#5F35F5] text-white rounded-lg hover:bg-purple-700 transition duration-300"
           >
             Login to Continue
           </button>
-
-          <p className="md:text-left text-center font-open text-[13px] text-[#13014c] mt-[35px]">
-            Already have an account ?
+          <p className="mt-5 text-sm text-center text-[#13014c]">
+            Already have an account?
             <a
               href="#"
-              className="text-[#EA6C00] hover:text-[#ea6d00b0] duration-500 pl-1 font-bold"
+              className="text-[#EA6C00] font-bold pl-1 hover:underline"
             >
               Sign Up
             </a>
           </p>
         </div>
-        <div className="w-1/2 hidden md:block">
-          <img
-            className="w-full h-screen object-cover"
-            src={login}
-            alt="#login"
-          />
-        </div>
+      </div>
+      <div className="lg:w-1/2 hidden lg:block">
+        <img
+          className="w-full h-screen object-cover"
+          src={login}
+          alt="#login"
+        />
       </div>
     </section>
   );

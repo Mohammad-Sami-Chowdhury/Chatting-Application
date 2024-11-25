@@ -8,6 +8,9 @@ export default {
         'nuni': ["Nunito", "sans-serif"],
         'pops': ["Poppins", "serif"],
       },
+      backgroundImage: {
+        'mobile': "url('/src/assets/bg.png')"
+      },
     },
   },
   plugins: [],
