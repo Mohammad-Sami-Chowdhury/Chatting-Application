@@ -62,7 +62,7 @@ const Login = () => {
 
   return (
     <section className="min-h-screen flex flex-col lg:flex-row items-center lg:justify-between bg-cover bg-center bg-no-repeat md:bg-mobile">
-      <div className="lg:w-1/2 w-full flex flex-col items-center md:pt-10 lg:pt-0">
+      <div className="lg:w-1/2 z-[99999] w-full flex flex-col items-center md:pt-10 lg:pt-0">
         <img
           className="absolute md:top-5 top-3 w-[100px] md:w-[130px] lg:l-[10%]"
           src={logo}

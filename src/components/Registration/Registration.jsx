@@ -53,7 +53,7 @@ function RegisterForm() {
   return (
     <section className="h-[100vh] md:bg-mobile bg-[#e5e5e5] flex flex-col md:flex-row items-center justify-center overflow-hidden">
       {/* Left Section */}
-      <div className="flex flex-col items-center justify-center lg:w-1/2 w-full p-5 md:p-20">
+      <div className="flex z-[99999] flex-col items-center justify-center lg:w-1/2 w-full p-5 md:p-20">
         <img
           src={logo}
           alt="Logo"
