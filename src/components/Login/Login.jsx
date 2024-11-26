@@ -68,7 +68,7 @@ const Login = () => {
           src={logo}
           alt="#logo"
         />
-        <div className="bg-[#e5e5e5] mt-[150px] lg:mt-0 backdrop-blur-xl opacity-85 rounded-2xl w-[90%] md:w-[600px] lg:w-[500px] h-auto p-6 flex flex-col items-center">
+        <div className="bg-[#e5e5e5] mt-[150px] lg:mt-0 backdrop-blur-xl opacity-85 rounded-2xl w-[90%] md:w-[600px] lg:w-[500px] h-auto p-6 md:p-12 flex flex-col items-center">
           <h1 className="text-[22px] md:text-[34px] text-center font-bold font-nuni text-[#11175D] pb-5">
             Login to your account!
           </h1>
@@ -81,9 +81,9 @@ const Login = () => {
             <p className="text-[#03014C] font-semibold text-sm">Login with Google</p>
           </button>
           {/* Email Field */}
-          <div className="relative w-full md:w-[300px] mb-5">
+          <div className="relative w-full md:w-[368px] mb-5">
             <label
-              className={`absolute left-4 px-1 text-sm transition-all ${
+              className={`absolute tracking-[2px] left-4 px-1 text-sm transition-all ${
                 email || emailFocused
                   ? "-top-2 bg-[#e5e5e5] text-[#5F35F5]"
                   : "top-4 md:top-7 text-gray-500"
@@ -97,14 +97,14 @@ const Login = () => {
               onChange={handleEmail}
               onFocus={() => setEmailFocused(true)}
               onBlur={() => setEmailFocused(false)}
-              className="w-full border border-gray-300 bg-[#E5E5E5] md:py-[26px] md:pl-[52px] p-4 rounded-lg focus:outline-[#5F35F5]"
+              className="w-full border border-gray-300 bg-transparent md:py-[26px] md:pl-[52px] p-4 rounded-lg focus:outline-[#5F35F5]"
             />
             {emailError && <p className="text-red-600 text-sm">{emailError}</p>}
           </div>
           {/* Password Field */}
-          <div className="relative w-full md:w-[300px] mb-5">
+          <div className="relative w-full md:w-[368px] mb-5">
             <label
-              className={`absolute left-4 px-1 text-sm transition-all ${
+              className={`absolute tracking-[2px] left-4 px-1 text-sm transition-all ${
                 password || passwordFocused
                   ? "-top-2 bg-[#e5e5e5] text-blue-900"
                   : "top-4 md:top-7 text-gray-500"
@@ -118,7 +118,7 @@ const Login = () => {
               onChange={handlePassword}
               onFocus={() => setPasswordFocused(true)}
               onBlur={() => setPasswordFocused(false)}
-              className="w-full border border-gray-300 bg-[#E5E5E5] md:py-[26px] md:pl-[52px] p-4 rounded-lg focus:outline-[#5F35F5]"
+              className="w-full border border-gray-300 bg-transparent md:py-[26px] md:pl-[52px] p-4 rounded-lg focus:outline-[#5F35F5]"
             />
             <button
               type="button"
@@ -133,7 +133,7 @@ const Login = () => {
           </div>
           <button
             onClick={handleLogin}
-            className="w-full md:w-[300px] md:py-[26px] py-4 bg-[#5F35F5] text-white rounded-lg hover:bg-purple-700 transition duration-300"
+            className="w-full md:w-[368px] font-bold md:py-[26px] py-4 bg-[#5F35F5] text-white rounded-lg hover:bg-purple-700 transition duration-300"
           >
             Login to Continue
           </button>

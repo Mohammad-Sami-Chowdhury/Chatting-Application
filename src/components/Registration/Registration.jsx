@@ -59,20 +59,20 @@ function RegisterForm() {
           alt="Logo"
           className="absolute top-5 left-5 md:left-10 w-[80px] md:w-[120px]"
         />
-        <div className="bg-white p-6 md:p-12 rounded-2xl shadow-lg w-full max-w-md">
-          <h2 className="text-[#11175D] text-[22px] md:text-[34px] font-bold text-center mb-4">
+        <div className="bg-[#e5e5e5] mt-[50px] lg:mt-0 backdrop-blur-xl opacity-85 rounded-2xl w-[90%] md:w-[600px] lg:w-[500px] h-auto p-6 md:p-12 flex flex-col items-center">
+          <h2 className="text-[#11175D] font-nuni text-[22px] md:text-[34px] font-bold text-center mb-4">
             Get started with easily register
           </h2>
-          <p className="text-gray-500 text-base md:text-lg text-center mb-8">
+          <p className="text-gray-500 font-nuni text-base md:text-lg text-center mb-8">
             Free register and you can enjoy it
           </p>
 
           {/* Email Field */}
           <div className="relative mb-6">
             <label
-              className={`absolute left-4 px-1 text-sm transition-all duration-200 ${
+              className={`absolute tracking-[2px] left-4 px-1 text-sm transition-all duration-200 ${
                 email || emailFocused
-                  ? "-top-2 bg-white text-[#5F35F5]"
+                  ? "-top-2 bg-[#e5e5e5] text-[#5F35F5]"
                   : "md:top-7 top-4 text-gray-500"
               }`}
             >
@@ -84,7 +84,7 @@ function RegisterForm() {
               onChange={handleEmail}
               onFocus={() => setEmailFocused(true)}
               onBlur={() => setEmailFocused(false)}
-              className="border border-gray-300 w-full md:py-[26px] md:pl-[52px] p-4 rounded-md focus:outline-[#5F35F5]"
+              className="border border-gray-300 bg-transparent w-[300px] md:w-[368px] md:py-[26px] md:pl-[52px] p-4 rounded-md focus:outline-[#5F35F5]"
             />
             <p className="text-red-600 text-sm mt-1">{emailError}</p>
           </div>
@@ -92,9 +92,9 @@ function RegisterForm() {
           {/* Name Field */}
           <div className="relative mb-6">
             <label
-              className={`absolute left-4 px-1 text-sm transition-all duration-200 ${
+              className={`absolute tracking-[2px] left-4 px-1 text-sm transition-all duration-200 ${
                 name || nameFocused
-                  ? "-top-2 bg-white text-[#5F35F5]"
+                  ? "-top-2 bg-[#e5e5e5] text-[#5F35F5]"
                   : "md:top-7 top-4 text-gray-500"
               }`}
             >
@@ -106,7 +106,7 @@ function RegisterForm() {
               onChange={handleName}
               onFocus={() => setNameFocused(true)}
               onBlur={() => setNameFocused(false)}
-              className="border border-gray-300 w-full md:py-[26px] md:pl-[52px] p-4 rounded-md focus:outline-[#5F35F5]"
+              className="border border-gray-300 bg-transparent w-[300px] md:w-[368px] md:py-[26px] md:pl-[52px] p-4 rounded-md focus:outline-[#5F35F5]"
             />
             <p className="text-red-600 text-sm mt-1">{nameError}</p>
           </div>
@@ -114,9 +114,9 @@ function RegisterForm() {
           {/* Password Field */}
           <div className="relative mb-6">
             <label
-              className={`absolute left-4 px-1 text-sm transition-all duration-200 ${
+              className={`absolute tracking-[2px] left-4 px-1 text-sm transition-all duration-200 ${
                 password || passwordFocused
-                  ? "-top-2 bg-white text-[#5F35F5]"
+                  ? "-top-2 bg-[#e5e5e5] text-[#5F35F5]"
                   : "md:top-7 top-4 text-gray-500"
               }`}
             >
@@ -128,7 +128,7 @@ function RegisterForm() {
               onChange={handlePassword}
               onFocus={() => setPasswordFocused(true)}
               onBlur={() => setPasswordFocused(false)}
-              className="border border-gray-300 w-full md:py-[26px] md:pl-[52px] p-4 rounded-md focus:outline-[#5F35F5]"
+              className="border border-gray-300 bg-transparent w-[300px] md:w-[368px] md:py-[26px] md:pl-[52px] p-4 rounded-md focus:outline-[#5F35F5]"
             />
             <button
               type="button"
@@ -143,11 +143,11 @@ function RegisterForm() {
           {/* Submit Button */}
           <button
             onClick={handleSignup}
-            className="w-full py-3 bg-[#5F35F5] text-white rounded-md hover:bg-purple-700 transition-all duration-300"
+            className="md:w-[368px] w-full py-3 font-nuni md:py-[26px] font-bold bg-[#5F35F5] text-white rounded-md hover:bg-purple-700 transition-all duration-300"
           >
             Sign up
           </button>
-          <p className="text-sm text-center text-gray-500 mt-4">
+          <p className="text-sm text-center font-open text-gray-500 mt-4">
             Already have an account?{" "}
             <a href="#" className="text-[#5F35F5] font-bold">
               Sign In
