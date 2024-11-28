@@ -1,15 +1,25 @@
-import './App.css'
-import Login from './components/Login/Login'
-import Registration from './components/Registration/Registration'
+import "./App.css";
+import Login from "./components/Login";
+import Registration from "./components/Registration";
+import {
+  createRoutesFromElements,
+  createBrowserRouter,
+  Route,
+  RouterProvider,
+} from "react-router-dom";
 
-function App() {
-
-  return (
+const router = createBrowserRouter(
+  createRoutesFromElements(
     <>
-      <Registration/>
-      {/* <Login/> */}
+      <Route path="/" element={<Login />}></Route>
+      <Route path="/login" element={<Login />}></Route>
+      <Route path="/signup" element={<Registration />}></Route>
     </>
   )
-}
+);
 
-export default App
+const App = () => {
+  return <RouterProvider router={router} />;
+};
+
+export default App;

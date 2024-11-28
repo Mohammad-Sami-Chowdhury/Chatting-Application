@@ -1,9 +1,11 @@
 import React from "react";
 import { useState } from "react";
-import login from "../../assets/login.png";
-import google from "../../assets/google.svg";
+import login from "../assets/login.png";
+import google from "../assets/google.svg";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import logo from "../../assets/logo.png";
+import logo from "../assets/logo.png";
+import { Link } from "react-router-dom";
+
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -139,12 +141,12 @@ const Login = () => {
           </button>
           <p className="mt-5 text-sm text-center text-[#13014c]">
             Already have an account?
-            <a
-              href="#"
+            <Link
+              to="/signup"
               className="text-[#EA6C00] font-bold pl-1 hover:underline"
             >
               Sign Up
-            </a>
+            </Link>
           </p>
         </div>
       </div>

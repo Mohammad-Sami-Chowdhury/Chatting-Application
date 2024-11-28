@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import registration from "../../assets/registration.png";
+import registration from "../assets/registration.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import logo from "../../assets/logo.png";
+import logo from "../assets/logo.png";
+import { Link } from "react-router-dom";
 
 function RegisterForm() {
   const [email, setEmail] = useState("");
@@ -149,9 +150,9 @@ function RegisterForm() {
           </button>
           <p className="text-sm text-center font-open text-gray-500 mt-4">
             Already have an account?{" "}
-            <a href="#" className="text-[#5F35F5] font-bold">
+            <Link to="/login" className="text-[#5F35F5] font-bold">
               Sign In
-            </a>
+            </Link>
           </p>
         </div>
       </div>
