@@ -5,7 +5,11 @@ import google from "../assets/google.svg";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import logo from "../assets/logo.png";
 import { Link } from "react-router-dom";
-
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { Discuss } from "react-loader-spinner";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -15,6 +19,9 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState("");
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
+  const [loader, setLoader] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleEmail = (e) => {
     setEmail(e.target.value);
@@ -60,10 +67,67 @@ const Login = () => {
       return;
     }
     setPasswordError("");
+
+    if (
+      email &&
+      password &&
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/ &&
+      /^[a-zA-Z\s]+$/ &&
+      password.length > 7 &&
+      /[A-Z]/ &&
+      /[a-z]/ &&
+      /\d/ &&
+      /[@$!%*?&]/.test(email && password)
+    ) {
+      const auth = getAuth();
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          setLoader(true);
+          toast.success("Signin Successfully");
+          setEmail("");
+          setPassword("");
+          setTimeout(() => {
+            navigate("/home");
+          }, 5000);
+          const user = userCredential.user;
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+        });
+    }
   };
 
   return (
     <section className="min-h-screen flex flex-col lg:flex-row items-center lg:justify-between bg-cover bg-center bg-no-repeat md:bg-mobile">
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition:Bounce
+      />
+      {loader ? (
+        <Discuss
+          visible={true}
+          height="80"
+          width="80"
+          ariaLabel="discuss-loading"
+          wrapperStyle={{}}
+          wrapperClass="discuss-wrapper absolute"
+          color="#fff"
+          backgroundColor="#5F35F5"
+        />
+      ) : (
+        ""
+      )}
       <div className="lg:w-1/2 z-[99999] w-full flex flex-col items-center md:pt-10 lg:pt-0">
         <img
           className="absolute md:top-5 top-3 w-[100px] md:w-[130px] lg:l-[10%]"
@@ -80,7 +144,9 @@ const Login = () => {
               src={google}
               alt="#google"
             />
-            <p className="text-[#03014C] font-semibold text-sm">Login with Google</p>
+            <p className="text-[#03014C] font-semibold text-sm">
+              Login with Google
+            </p>
           </button>
           {/* Email Field */}
           <div className="relative w-full md:w-[368px] mb-5">

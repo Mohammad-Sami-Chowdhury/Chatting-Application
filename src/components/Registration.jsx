@@ -3,24 +3,44 @@ import registration from "../assets/registration.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import logo from "../assets/logo.png";
 import { Link } from "react-router-dom";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
+import { Discuss } from "react-loader-spinner";
 
 function RegisterForm() {
+  // email state
   const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [nameError, setNameError] = useState("");
   const [emailFocused, setEmailFocused] = useState(false);
+  const handleEmail = (e) => setEmail(e.target.value);
+
+  // name state
+  const [name, setName] = useState("");
+  const [nameError, setNameError] = useState("");
   const [nameFocused, setNameFocused] = useState(false);
+  const handleName = (e) => setName(e.target.value);
+
+  // password state
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  const handleEmail = (e) => setEmail(e.target.value);
-  const handleName = (e) => setName(e.target.value);
   const handlePassword = (e) => setPassword(e.target.value);
 
+  // navigation state
+  const navigate = useNavigate();
+
+  // loader state
+  const [loader, setLoader] = useState(false);
+
   const handleSignup = () => {
+    // email validation
     if (!email) {
       setEmailError("Please Enter Your Email");
       return;
@@ -32,6 +52,7 @@ function RegisterForm() {
     }
     setEmailError("");
 
+    //name validation
     if (!name) {
       setNameError("Please Enter Your Name");
       return;
@@ -41,18 +62,101 @@ function RegisterForm() {
     }
     setNameError("");
 
+    //password validation
     if (!password) {
-      setPasswordError("Please Enter A Password");
+      setPasswordError("Please Set A Password");
       return;
     } else if (password.length < 8) {
-      setPasswordError("Password Must Be At Least 8 Characters");
+      setPasswordError("Password must be at least 8 characters long.");
+      return;
+    } else if (!/[A-Z]/.test(password)) {
+      setPasswordError("Password must include at least one uppercase letter.");
+      return;
+    } else if (!/[a-z]/.test(password)) {
+      setPasswordError("Password must include at least one lowercase letter.");
+      return;
+    } else if (!/\d/.test(password)) {
+      setPasswordError("Password must include at least one number.");
+      return;
+    } else if (!/[@$!%*?&]/.test(password)) {
+      setPasswordError(
+        "Password must include at least one special character (@, $, !, %, *, ?, &)."
+      );
       return;
     }
     setPasswordError("");
+
+    if (
+      email &&
+      name &&
+      password &&
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/ &&
+      /^[a-zA-Z\s]+$/ &&
+      password.length > 7 &&
+      /[A-Z]/ &&
+      /[a-z]/ &&
+      /\d/ &&
+      /[@$!%*?&]/.test(email && name && password)
+    ) {
+      const auth = getAuth();
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          sendEmailVerification(auth.currentUser).then(() => {
+            setLoader(true);
+            toast.success("Registration Successfull");
+            setEmail("");
+            setName("");
+            setPassword("");
+            setTimeout(() => {
+              navigate("/login");
+            }, 5000).catch((error) => {
+              toast.error("A Problem Occured When Signup");
+              console.error(error);
+
+              // const errorMessage = error.message;
+            });
+          });
+        })
+        .catch((error) => {
+          setLoader(false);
+          const errorCode = error.code;
+          if (errorCode.includes("auth/email-already-in-use")) {
+            toast.error("This Email is Already in Use");
+          }
+          // const errorMessage = error.message;
+        });
+    }
   };
 
   return (
     <section className="h-[100vh] md:bg-mobile bg-[#e5e5e5] flex flex-col md:flex-row items-center justify-center overflow-hidden">
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition:Bounce
+      />
+      {loader ? (
+        <Discuss
+          visible={true}
+          height="80"
+          width="80"
+          ariaLabel="discuss-loading"
+          wrapperStyle={{}}
+          wrapperClass="discuss-wrapper absolute"
+          color="#fff"
+          backgroundColor="#5F35F5"
+        />
+      ) : (
+        ""
+      )}
       {/* Left Section */}
       <div className="flex z-[99999] flex-col items-center justify-center lg:w-1/2 w-full p-5 md:p-20">
         <img
@@ -67,7 +171,6 @@ function RegisterForm() {
           <p className="text-gray-500 font-nuni text-base md:text-lg text-center mb-8">
             Free register and you can enjoy it
           </p>
-
           {/* Email Field */}
           <div className="relative mb-6">
             <label
