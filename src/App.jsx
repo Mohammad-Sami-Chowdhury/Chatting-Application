@@ -1,7 +1,9 @@
 import "./App.css";
-import Login from "./components/Login";
-import Registration from "./components/Registration";
-import Home from "./components/Home"
+import Login from "./pages/Login/Login";
+import Registration from "./pages/Registration/Registration";
+import Home from "./pages/Home/Home"
+import Sidebar from "./components/Sidebar/Sidebar";
+import PasswordReset from "./pages/PasswordReset/PasswordReset";
 import firebaseConfig from "./components/firebase/firebase.config";
 import {
   createRoutesFromElements,
@@ -17,6 +19,9 @@ const router = createBrowserRouter(
       <Route path="/signup" element={<Registration />}></Route>
       <Route path="/login" element={<Login />}></Route>
       <Route path="/home" element={<Home />}></Route>
+      <Route path="/reset" element={<PasswordReset />}></Route>
+      <Route path="/sidebar" element={<Sidebar />}></Route>
+
     </>
   )
 );

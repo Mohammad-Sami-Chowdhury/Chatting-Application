@@ -1,12 +1,12 @@
 import React from "react";
 import { useState } from "react";
-import login from "../assets/login.png";
-import google from "../assets/google.svg";
+import login from "../../assets/login.png";
+import google from "../../assets/google.svg";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import logo from "../assets/logo.png";
+import logo from "../../assets/logo.png";
 import { Link } from "react-router-dom";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { Discuss } from "react-loader-spinner";
+import { Bars } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -82,19 +82,28 @@ const Login = () => {
       const auth = getAuth();
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-          setLoader(true);
-          toast.success("Signin Successfully");
-          setEmail("");
-          setPassword("");
-          setTimeout(() => {
-            navigate("/home");
-          }, 5000);
           const user = userCredential.user;
-          // ...
+          if (user.emailVerified) {
+            setLoader(true);
+            toast.success("Signin Successfully");
+            setEmail("");
+            setPassword("");
+            setTimeout(() => {
+              navigate("/home");
+            }, 5000);
+          } else {
+            toast.error("Please Verify Your Mail");
+          }
         })
         .catch((error) => {
           const errorCode = error.code;
-          const errorMessage = error.message;
+          if (errorCode === "auth/wrong-password") {
+            toast.error("Incorrect password.");
+          } else if (errorCode === "auth/user-not-found") {
+            toast.error("User not found. Please sign up.");
+          } else {
+            toast.error("Login failed. Please try again.");
+          }
         });
     }
   };
@@ -103,7 +112,7 @@ const Login = () => {
     <section className="min-h-screen flex flex-col lg:flex-row items-center lg:justify-between bg-cover bg-center bg-no-repeat md:bg-mobile">
       <ToastContainer
         position="top-center"
-        autoClose={2000}
+        autoClose={1000}
         hideProgressBar={true}
         newestOnTop={false}
         closeOnClick
@@ -114,20 +123,7 @@ const Login = () => {
         theme="light"
         transition:Bounce
       />
-      {loader ? (
-        <Discuss
-          visible={true}
-          height="80"
-          width="80"
-          ariaLabel="discuss-loading"
-          wrapperStyle={{}}
-          wrapperClass="discuss-wrapper absolute"
-          color="#fff"
-          backgroundColor="#5F35F5"
-        />
-      ) : (
-        ""
-      )}
+
       <div className="lg:w-1/2 z-[99999] w-full flex flex-col items-center md:pt-10 lg:pt-0">
         <img
           className="absolute md:top-5 top-3 w-[100px] md:w-[130px] lg:l-[10%]"
@@ -203,7 +199,20 @@ const Login = () => {
             onClick={handleLogin}
             className="w-full md:w-[368px] font-bold md:py-[26px] py-4 bg-[#5F35F5] text-white rounded-lg hover:bg-purple-700 transition duration-300"
           >
-            Login to Continue
+            {loader ? (
+              <Bars
+                visible={true}
+                height="30"
+                width="30"
+                ariaLabel="discuss-loading"
+                wrapperStyle={{}}
+                wrapperClass="discuss-wrapper flex justify-center"
+                color="#fff"
+                backgroundColor="#5F35F5"
+              />
+            ) : (
+              "Login to Continue"
+            )}
           </button>
           <p className="mt-5 text-sm text-center text-[#13014c]">
             Already have an account?

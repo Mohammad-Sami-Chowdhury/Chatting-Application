@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import registration from "../assets/registration.png";
+import registration from "../../assets/registration.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import logo from "../assets/logo.png";
+import logo from "../../assets/logo.png";
 import { Link } from "react-router-dom";
 import {
   getAuth,
@@ -11,7 +11,7 @@ import {
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-import { Discuss } from "react-loader-spinner";
+import { Bars } from "react-loader-spinner";
 
 function RegisterForm() {
   // email state
@@ -103,15 +103,15 @@ function RegisterForm() {
         .then(() => {
           sendEmailVerification(auth.currentUser).then(() => {
             setLoader(true);
-            toast.success("Registration Successfull");
+            toast.success("Please Check Your Mail");
             setEmail("");
             setName("");
             setPassword("");
             setTimeout(() => {
               navigate("/login");
-            }, 5000).catch((error) => {
+            }, 2000).catch((error) => {
               toast.error("A Problem Occured When Signup");
-              console.error(error);
+              console.log(error);
 
               // const errorMessage = error.message;
             });
@@ -123,7 +123,6 @@ function RegisterForm() {
           if (errorCode.includes("auth/email-already-in-use")) {
             toast.error("This Email is Already in Use");
           }
-          // const errorMessage = error.message;
         });
     }
   };
@@ -132,7 +131,7 @@ function RegisterForm() {
     <section className="h-[100vh] md:bg-mobile bg-[#e5e5e5] flex flex-col md:flex-row items-center justify-center overflow-hidden">
       <ToastContainer
         position="top-center"
-        autoClose={2000}
+        autoClose={1000}
         hideProgressBar={true}
         newestOnTop={false}
         closeOnClick
@@ -143,20 +142,7 @@ function RegisterForm() {
         theme="light"
         transition:Bounce
       />
-      {loader ? (
-        <Discuss
-          visible={true}
-          height="80"
-          width="80"
-          ariaLabel="discuss-loading"
-          wrapperStyle={{}}
-          wrapperClass="discuss-wrapper absolute"
-          color="#fff"
-          backgroundColor="#5F35F5"
-        />
-      ) : (
-        ""
-      )}
+
       {/* Left Section */}
       <div className="flex z-[99999] flex-col items-center justify-center lg:w-1/2 w-full p-5 md:p-20">
         <img
@@ -249,7 +235,20 @@ function RegisterForm() {
             onClick={handleSignup}
             className="md:w-[368px] w-full py-3 font-nuni md:py-[26px] font-bold bg-[#5F35F5] text-white rounded-md hover:bg-purple-700 transition-all duration-300"
           >
-            Sign up
+            {loader ? (
+              <Bars
+                visible={true}
+                height="30"
+                width="30"
+                ariaLabel="discuss-loading"
+                wrapperStyle={{}}
+                wrapperClass="discuss-wrapper flex justify-center"
+                color="#fff"
+                backgroundColor="#5F35F5"
+              />
+            ) : (
+              "Sign up"
+            )}
           </button>
           <p className="text-sm text-center font-open text-gray-500 mt-4">
             Already have an account?{" "}
