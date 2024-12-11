@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+import { Bars } from "react-loader-spinner";
+import { ToastContainer, toast } from "react-toastify";
 
 const PasswordReset = () => {
   const [email, setEmail] = useState("");
@@ -9,7 +12,7 @@ const PasswordReset = () => {
 
   const [loader, setLoader] = useState(false);
 
-  const handleSignup = () => {
+  const handlePassReset = () => {
     if (!email) {
       setEmailError("Please Enter Your Email");
       return;
@@ -20,13 +23,48 @@ const PasswordReset = () => {
       return;
     }
     setEmailError("");
+    if (
+      email &&
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)
+    ) {
+      const auth = getAuth();
+      sendPasswordResetEmail(auth, email)
+        .then(() => {
+          toast.success("Email Sent Successfully");
+          setEmail("");
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          if (errorCode.includes("auth/email-already-in-use")) {
+            toast.error("Something Wrong");
+          }
+        });
+    }
   };
+
   return (
     <div className="bg-[#5F35F5] w-full h-screen flex justify-center items-center">
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        transition:Bounce
+      />
       <div className="bg-white p-10 rounded-lg">
         <div className="pb-5">
-          <h1 className="text-gray-500 pb-2 font-nuni font-bold text-4xl">Forget Your Password</h1>
-          <h2 className="text-gray-500 font-nuni font-base">Enter Your Email Address</h2>
+          <h1 className="text-gray-500 pb-2 font-nuni font-bold text-4xl">
+            Forget Your Password
+          </h1>
+          <h2 className="text-gray-500 font-nuni font-base">
+            Enter Your Email Address
+          </h2>
         </div>
         <div className="relative">
           <label
@@ -48,7 +86,7 @@ const PasswordReset = () => {
           />
           <p className="text-red-600 text-sm mt-1">{emailError}</p>
           <button
-            onClick={handleSignup}
+            onClick={handlePassReset}
             className="md:w-[368px] mt-10 w-full py-3 font-nuni md:py-[26px] font-bold bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-all duration-300"
           >
             {loader ? (

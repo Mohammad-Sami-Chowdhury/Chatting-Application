@@ -12,7 +12,7 @@ const Sidebar = () => {
   const [active, setActive] = useState("home");
 
   return (
-    <div className="h-full w-[186px] bg-[#5F35F5] rounded-[20px] flex flex-col items-center py-5">
+    <div className="h-full w-[120px] bg-[#5F35F5] rounded-[20px] flex flex-col items-center py-5">
       {/* Profile Picture */}
       <div className="mb-[98px]">
         <img src={icon1} alt="Profile" />
@@ -21,8 +21,8 @@ const Sidebar = () => {
       {/* Home Icon */}
       <div className="pb-[0px]">
         <div
-          className={`w-full flex items-center justify-center cursor-pointer  ${
-            active === "home" ? "bg-white text-purple-600" : "text-white"
+          className={`flex items-center justify-center cursor-pointer  ${
+            active === "home" ? "bg-white w-[90px] text-purple-600" : "text-white"
           } rounded-lg h-[89px] w-[150px] transition-colors duration-300`}
           onClick={() => setActive("home")}
         >
@@ -33,8 +33,8 @@ const Sidebar = () => {
       {/* Chat Icon */}
       <div className="pb-[0px]">
         <div
-          className={`w-full flex items-center justify-center cursor-pointer  ${
-            active === "chat" ? "bg-white text-purple-600" : "text-white"
+          className={`flex items-center justify-center cursor-pointer  ${
+            active === "chat" ? "bg-white w-[90px] text-purple-600" : "text-white"
           } rounded-lg h-[89px] w-[150px] transition-colors duration-300`}
           onClick={() => setActive("chat")}
         >
@@ -45,9 +45,9 @@ const Sidebar = () => {
       {/* Notifications Icon */}
       <div className="pb-[0px] ">
         <div
-          className={`w-full flex items-center justify-center cursor-pointer ${
+          className={`flex items-center justify-center cursor-pointer ${
             active === "notifications"
-              ? "bg-white text-purple-600"
+              ? "bg-white w-[90px] text-purple-600"
               : "text-white"
           } rounded-lg h-[89px] w-[150px] transition-colors duration-300`}
           onClick={() => setActive("notifications")}
@@ -59,8 +59,8 @@ const Sidebar = () => {
       {/* Settings Icon */}
       <div className="pb-[200px]">
         <div
-          className={`w-full flex items-center justify-center cursor-pointer  ${
-            active === "settings" ? "bg-white text-purple-600" : "text-white"
+          className={`flex items-center justify-center cursor-pointer  ${
+            active === "settings" ? "bg-white w-[90px] text-purple-600" : "text-white"
           } rounded-lg h-[89px] w-[150px] transition-colors duration-300`}
           onClick={() => setActive("settings")}
         >

@@ -5,13 +5,21 @@ import google from "../../assets/google.svg";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import logo from "../../assets/logo.png";
 import { Link } from "react-router-dom";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
 import { Bars } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useDispatch } from "react-redux";
+import { userLoginInfo } from "../../slices/userSlice";
 
 const Login = () => {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -20,6 +28,7 @@ const Login = () => {
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [loader, setLoader] = useState(false);
+ 
 
   const navigate = useNavigate();
 
@@ -31,6 +40,25 @@ const Login = () => {
   const handlePassword = (e) => {
     setPassword(e.target.value);
     setPasswordError("");
+  };
+
+  const handleGoogle = async () => {
+    const googleProvider = new GoogleAuthProvider(); // Correct instantiation
+    try {
+      const auth = getAuth();
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+      // Log success and navigate
+      console.log("User Info:", user);
+      toast.success(`Welcome, ${user.displayName}!`);
+      setTimeout(() => {
+        navigate("/home");
+      }, 3000);
+    } catch (error) {
+      console.error("Google Sign-In Error:", error);
+      toast.error("Google Sign-In failed. Please try again.");
+    }
   };
 
   const handleLogin = () => {
@@ -81,28 +109,42 @@ const Login = () => {
     ) {
       const auth = getAuth();
       signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          if (user.emailVerified) {
-            setLoader(true);
-            toast.success("Signin Successfully");
-            setEmail("");
-            setPassword("");
-            setTimeout(() => {
-              navigate("/home");
-            }, 5000);
-          } else {
-            toast.error("Please Verify Your Mail");
-          }
+        // .then((userCredential) => {
+        //   console.log(userCredential.user);
+        //   dispatch(userLoginInfo(userCredential.user));
+        //   localStorage.setItem("userLoginInfo", JSON.stringify(user.user));
+        //   const user = userCredential.user;
+        //   if (user.emailVerified) {
+        //     setLoader(true);
+        //     toast.success(`Welcome, ${user.displayName}!`);
+        //     setEmail("");
+        //     setPassword("");
+        //     setTimeout(() => {
+        //       navigate("/home");
+        //     }, 3000);
+        //   } else {
+        //     toast.error("Please Verify Your Mail");
+        //   }
+        // })
+        .then((user) => {
+          console.log(user.user);
+          dispatch(userLoginInfo(user.user));
+          localStorage.setItem("userLoginInfo", JSON.stringify(user.user));
+          setLoader(true);
+          setEmail("");
+          setPassword("");
+          setTimeout(() => {
+            navigate("/home");
+          }, 3000);
         })
         .catch((error) => {
           const errorCode = error.code;
           if (errorCode === "auth/wrong-password") {
             toast.error("Incorrect password.");
           } else if (errorCode === "auth/user-not-found") {
-            toast.error("User not found. Please sign up.");
-          } else {
             toast.error("Login failed. Please try again.");
+          } else {
+            toast.error("User not found. Please Signup");
           }
         });
     }
@@ -112,7 +154,7 @@ const Login = () => {
     <section className="min-h-screen flex flex-col lg:flex-row items-center lg:justify-between bg-cover bg-center bg-no-repeat md:bg-mobile">
       <ToastContainer
         position="top-center"
-        autoClose={1000}
+        autoClose={3000}
         hideProgressBar={true}
         newestOnTop={false}
         closeOnClick
@@ -134,7 +176,10 @@ const Login = () => {
           <h1 className="text-[22px] md:text-[34px] text-center font-bold font-nuni text-[#11175D] pb-5">
             Login to your account!
           </h1>
-          <button className="group flex items-center justify-center gap-2 md:py-[26px] py-4 w-[220px] border border-gray-300 rounded-lg mb-5 hover:border-[#5F35F5] transition duration-300">
+          <button
+            onClick={handleGoogle}
+            className="group flex items-center justify-center gap-2 md:py-[26px] py-4 w-[220px] border border-gray-300 rounded-lg mb-5 hover:border-[#5F35F5] transition duration-300"
+          >
             <img
               className="group-hover:rotate-[360deg] transition-transform duration-500"
               src={google}
@@ -221,6 +266,15 @@ const Login = () => {
               className="text-[#EA6C00] font-bold pl-1 hover:underline"
             >
               Sign Up
+            </Link>
+          </p>
+          <p className="mt-5 text-sm text-center text-[#13014c]">
+            Forgot password?
+            <Link
+              to="/reset"
+              className="text-[#EA6C00] font-bold pl-1 hover:underline"
+            >
+              reset
             </Link>
           </p>
         </div>
