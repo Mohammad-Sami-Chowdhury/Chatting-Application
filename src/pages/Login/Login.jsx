@@ -135,7 +135,7 @@ const Login = () => {
           setPassword("");
           setTimeout(() => {
             navigate("/home");
-          }, 3000);
+          }, 2000);
         })
         .catch((error) => {
           const errorCode = error.code;
