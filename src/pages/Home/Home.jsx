@@ -13,6 +13,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
 import { toast, ToastContainer } from "react-toastify";
+import "../../index.css"
 
 const Home = () => {
   const auth = getAuth();
@@ -74,14 +75,14 @@ const Home = () => {
             </div>
 
             {/* Grid Layout */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 rounded-md">
               {/* Group List */}
               <div className="bg-white p-4 rounded-lg shadow-main">
                 <div className="flex items justify-between">
                   <h2 className="font-bold text-lg mb-3">Groups List</h2>
                   <BsThreeDotsVertical className="cursor-pointer" />
                 </div>
-                <div className="overflow-y-scroll h-[350px]">
+                <div className="overflow-y-scroll h-[350px] scrollbar-hidden">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center">
                       <img src={icon2} alt="Group Icon" className="w-12 h-12" />
@@ -218,7 +219,7 @@ const Home = () => {
                   <h2 className="font-bold text-lg mb-3">Friends</h2>
                   <BsThreeDotsVertical className="cursor-pointer" />
                 </div>
-                <div className="overflow-y-scroll h-[350px]">
+                <div className="overflow-y-scroll h-[350px] scrollbar-hidden">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center">
                       <img
@@ -347,7 +348,7 @@ const Home = () => {
                   <h2 className="font-bold text-lg mb-3">User List</h2>
                   <BsThreeDotsVertical className="cursor-pointer" />
                 </div>
-                <div className="overflow-y-scroll h-[350px]">
+                <div className="overflow-y-scroll h-[350px] scrollbar-hidden">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center">
                       <img src={icon3} alt="User Icon" className="w-12 h-12" />
@@ -480,7 +481,7 @@ const Home = () => {
                   <h2 className="font-bold text-lg mb-3">Friend Requests</h2>
                   <BsThreeDotsVertical className="cursor-pointer" />
                 </div>
-                <div className="overflow-y-scroll h-[340px]">
+                <div className="overflow-y-scroll h-[340px] scrollbar-hidden">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center">
                       <img
@@ -636,7 +637,7 @@ const Home = () => {
                   <h2 className="font-bold text-lg mb-3">My Groups</h2>
                   <BsThreeDotsVertical className="cursor-pointer" />
                 </div>
-                <div className="overflow-y-scroll h-[340px]">
+                <div className="overflow-y-scroll h-[340px] scrollbar-hidden">
 
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center">
@@ -690,7 +691,7 @@ const Home = () => {
                   <h2 className="font-bold text-lg mb-3">Block Users</h2>
                   <BsThreeDotsVertical className="cursor-pointer" />
                 </div>
-                <div className="overflow-y-scroll h-[340px]">
+                <div className="overflow-y-scroll h-[340px] scrollbar-hidden">
 
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center">

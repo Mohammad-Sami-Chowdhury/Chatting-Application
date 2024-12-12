@@ -12,8 +12,8 @@ export default {
         'mobile': "url('/src/assets/bg.png')"
       },
       boxShadow: {
-        'main': '60px 60px 60px 60px rgba(0, 0, 0, 0.3)',
-      }
+        'main': '0 35px 60px -15px rgba(0, 0, 0, 0.3)',
+      },
     },
   },
   plugins: [],
