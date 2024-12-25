@@ -7,11 +7,13 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   sendEmailVerification,
+  updateProfile,
 } from "firebase/auth";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import { Bars } from "react-loader-spinner";
+import avatar from "../../assets/avatar.jpg";
 
 function RegisterForm() {
   // email state
@@ -101,6 +103,10 @@ function RegisterForm() {
       const auth = getAuth();
       createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
+          updateProfile(auth.currentUser, {
+            displayName: name,
+            photoURL: avatar,
+          });
           sendEmailVerification(auth.currentUser).then(() => {
             setLoader(true);
             toast.success("Please Check Your Mail");

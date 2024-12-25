@@ -12,13 +12,28 @@ import {
   IoSettingsOutline,
 } from "react-icons/io5";
 import { TiCancel } from "react-icons/ti";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadString,
+} from "firebase/storage";
+import { getAuth, updateProfile } from "firebase/auth";
+import { useSelector } from "react-redux";
+import { userLoginInfo } from "../../slices/userSlice";
+import { useDispatch } from "react-redux";
 
 const Sidebar = () => {
+  const dispatch = useDispatch();
+  const storage = getStorage();
+  const auth = getAuth();
+  const data = useSelector((data) => data.userDetails.userInfo);
+
   const [active, setActive] = useState("home");
   const [click, setClick] = useState(false);
 
   const handleClick = () => {
-    console.log("ok cool");
+    console.log(auth);
     setClick(true);
   };
   const handleClose = () => {
@@ -30,6 +45,7 @@ const Sidebar = () => {
   const [image, setImage] = useState(null); // Original image
   const [croppedImage, setCroppedImage] = useState(null); // Cropped image preview
   const cropperRef = useRef(null); // Reference for the cropper instance
+  const [cropData, setCropData] = useState("");
 
   // Handle file input change
   const handleFileChange = (e) => {
@@ -62,15 +78,15 @@ const Sidebar = () => {
     }
   };
 
-  // Handle save (you can send the `croppedImage` to a server)
-  const handleSave = () => {
-    if (croppedImage) {
-      console.log("Saved image:", croppedImage);
-      toast.success("Profile picture updated successfully!");
-    } else {
-      toast.warn("No cropped image to save.");
-    }
-  };
+  // // Handle save (you can send the `croppedImage` to a server)
+  // const handleSave = () => {
+  //   if (croppedImage) {
+  //     console.log("Saved image:", croppedImage);
+  //     toast.success("Profile picture updated successfully!");
+  //   } else {
+  //     toast.warn("No cropped image to save.");
+  //   }
+  // };
 
   // Handle cancel/reset
   const handleCancel = () => {
@@ -78,13 +94,41 @@ const Sidebar = () => {
     setCroppedImage(null); // Clear the cropped preview
     toast.warn("Changes were discarded.");
   };
+  const getCropData = () => {
+    if (typeof cropperRef.current?.cropper !== "undefined") {
+      setCropData(cropperRef.current?.cropper.getCroppedCanvas().toDataURL());
+    }
+    const storageRef = ref(storage, auth.currentUser.uid);
+    // Data URL string
+    const message4 = cropperRef.current?.cropper.getCroppedCanvas().toDataURL();
+    uploadString(storageRef, message4, "data_url").then((snapshot) => {});
+    getDownloadURL(storageRef, message4, "data_url").then((downloadURL) => {
+      console.log(downloadURL);
+      updateProfile(auth.currentUser, {
+        displayName: data.displayName,
+        photoURL: downloadURL,
+      }).then(() => {
+        toast.success("Profile Updated Successfully");
+        setImage(null);
+        setCroppedImage(null);
+        let sstorage = localStorage.getItem("userLoginInfo");
+        console.log("sstorage", JSON.parse(sstorage));
+        let userUpdate = {
+          ...JSON.parse(sstorage),
+          photoURL: downloadURL,
+        };
+        localStorage.setItem("userLoginInfo", JSON.stringify(userUpdate));
+        dispatch(userLoginInfo(userUpdate));
+      });
+    });
+  };
 
   return (
     <section>
       <ToastContainer
         position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
+        autoClose={3000}
+        hideProgressBar={true}
         newestOnTop={false}
         closeOnClick={false}
         rtl={false}
@@ -96,12 +140,16 @@ const Sidebar = () => {
       />
       <div className="h-full w-[120px] bg-[#5F35F5] rounded-[20px] flex flex-col items-center py-5">
         {/* Profile Picture */}
-        <div className="mb-[98px] relative flex items-center justify-center">
-          <img src={icon1} alt="Profile" />
+        <div className=" h-[100px] w-[100px] overflow-hidden rounded-full relative flex items-center justify-center">
+          <img src={data.photoURL} alt="Profile" />
           <div className="absolute opacity-0 duration-500 hover:opacity-70 cursor-pointer text-white top-0 left-0 bg-black h-[100px] w-[100px] rounded-full flex justify-center items-center">
             <FaCloudUploadAlt onClick={handleClick} size={30} />
           </div>
         </div>
+
+        <p className="text-xl mb-[98px] font-bold font-pops text-white">
+          {data.displayName}
+        </p>
 
         {/* Home Icon */}
         <div className="pb-[0px]">
@@ -183,7 +231,7 @@ const Sidebar = () => {
             className="absolute top-4 right-[50px] text-white text-lg"
             onClick={handleCancel}
           >
-            <TiCancel size={30}/>
+            <TiCancel size={30} />
           </button>
         </div>
         <h2 className="text-white text-2xl font-extrabold font-open text-center mb-5">
@@ -226,7 +274,7 @@ const Sidebar = () => {
           {/* Action Buttons */}
           {croppedImage && (
             <button
-              onClick={handleSave}
+              onClick={getCropData}
               className="bg-green-600 font-bold text-white px-6 py-2 rounded-lg hover:bg-green-700"
             >
               Save
@@ -235,7 +283,7 @@ const Sidebar = () => {
           {/* File Upload */}
           {image ? (
             <label className="flex flex-col items-center justify-center w-[200px] h-[50px] bg-purple-600 text-white font-semibold rounded-lg shadow-lg cursor-pointer hover:bg-purple-700 transition-all duration-300 mb-5">
-              <span>Upload Image</span>
+              <span>Upload Another Image</span>
               <input
                 type="file"
                 accept="image/*"
