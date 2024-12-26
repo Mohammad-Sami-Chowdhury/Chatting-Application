@@ -109,28 +109,12 @@ const Login = () => {
     ) {
       const auth = getAuth();
       signInWithEmailAndPassword(auth, email, password)
-        // .then((userCredential) => {
-        //   console.log(userCredential.user);
-        //   dispatch(userLoginInfo(userCredential.user));
-        //   localStorage.setItem("userLoginInfo", JSON.stringify(user.user));
-        //   const user = userCredential.user;
-        //   if (user.emailVerified) {
-        //     setLoader(true);
-        //     toast.success(`Welcome, ${user.displayName}!`);
-        //     setEmail("");
-        //     setPassword("");
-        //     setTimeout(() => {
-        //       navigate("/home");
-        //     }, 3000);
-        //   } else {
-        //     toast.error("Please Verify Your Mail");
-        //   }
-        // })
         .then((user) => {
           console.log(user.user);
           dispatch(userLoginInfo(user.user));
           localStorage.setItem("userLoginInfo", JSON.stringify(user.user));
           setLoader(true);
+          toast.success("Login Successfull" );
           setEmail("");
           setPassword("");
           setTimeout(() => {
