@@ -117,7 +117,6 @@ function RegisterForm() {
               navigate("/login");
             }, 2000).catch((error) => {
               toast.error("A Problem Occured When Signup");
-              console.log(error);
             });
           });
         })

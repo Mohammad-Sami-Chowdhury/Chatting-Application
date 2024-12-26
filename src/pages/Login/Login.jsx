@@ -50,13 +50,11 @@ const Login = () => {
       const user = result.user;
 
       // Log success and navigate
-      console.log("User Info:", user);
       toast.success(`Welcome, ${user.displayName}!`);
       setTimeout(() => {
         navigate("/home");
       }, 3000);
     } catch (error) {
-      console.error("Google Sign-In Error:", error);
       toast.error("Google Sign-In failed. Please try again.");
     }
   };
@@ -110,7 +108,6 @@ const Login = () => {
       const auth = getAuth();
       signInWithEmailAndPassword(auth, email, password)
         .then((user) => {
-          console.log(user.user);
           dispatch(userLoginInfo(user.user));
           localStorage.setItem("userLoginInfo", JSON.stringify(user.user));
           setLoader(true);

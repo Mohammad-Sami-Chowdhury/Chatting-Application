@@ -33,7 +33,6 @@ const Sidebar = () => {
   const [click, setClick] = useState(false);
 
   const handleClick = () => {
-    console.log(auth);
     setClick(true);
   };
   const handleClose = () => {
@@ -73,20 +72,10 @@ const Sidebar = () => {
         const croppedDataUrl = cropper.getCroppedCanvas().toDataURL();
         setCroppedImage(croppedDataUrl);
       } catch (error) {
-        console.error("Error generating cropped image:", error);
+        toast.error("Error generating cropped image:", error);
       }
     }
   };
-
-  // // Handle save (you can send the `croppedImage` to a server)
-  // const handleSave = () => {
-  //   if (croppedImage) {
-  //     console.log("Saved image:", croppedImage);
-  //     toast.success("Profile picture updated successfully!");
-  //   } else {
-  //     toast.warn("No cropped image to save.");
-  //   }
-  // };
 
   // Handle cancel/reset
   const handleCancel = () => {
@@ -103,7 +92,6 @@ const Sidebar = () => {
     const message4 = cropperRef.current?.cropper.getCroppedCanvas().toDataURL();
     uploadString(storageRef, message4, "data_url").then((snapshot) => {});
     getDownloadURL(storageRef, message4, "data_url").then((downloadURL) => {
-      console.log(downloadURL);
       updateProfile(auth.currentUser, {
         displayName: data.displayName,
         photoURL: downloadURL,
@@ -112,7 +100,6 @@ const Sidebar = () => {
         setImage(null);
         setCroppedImage(null);
         let sstorage = localStorage.getItem("userLoginInfo");
-        console.log("sstorage", JSON.parse(sstorage));
         let userUpdate = {
           ...JSON.parse(sstorage),
           photoURL: downloadURL,

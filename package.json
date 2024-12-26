@@ -19,7 +19,7 @@
     "react-loader-spinner": "^6.1.6",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.0.1",
-    "react-toastify": "^10.0.6",
+    "react-toastify": "^11.0.2",
     "tostify": "^0.0.1"
   },
   "devDependencies": {
