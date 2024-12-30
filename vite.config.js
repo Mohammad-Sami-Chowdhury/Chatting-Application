@@ -6,7 +6,7 @@ export default defineConfig({
   root: '.', // Root directory for your project
   server: {
     host: true, // Allows network access (useful for testing on other devices)
-    port: 3000, // Optional: Specify the port
+    port: 5173, // Optional: Specify the port
   },
   build: {
     outDir: 'dist', // Output directory for production build

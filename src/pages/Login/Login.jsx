@@ -17,6 +17,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
 import { userLoginInfo } from "../../slices/userSlice";
+import { getDatabase, ref, set } from "firebase/database";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -28,7 +29,6 @@ const Login = () => {
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [loader, setLoader] = useState(false);
- 
 
   const navigate = useNavigate();
 
@@ -111,7 +111,7 @@ const Login = () => {
           dispatch(userLoginInfo(user.user));
           localStorage.setItem("userLoginInfo", JSON.stringify(user.user));
           setLoader(true);
-          toast.success("Login Successfull" );
+          toast.success("Login Successfull");
           setEmail("");
           setPassword("");
           setTimeout(() => {
@@ -125,7 +125,7 @@ const Login = () => {
           } else if (errorCode === "auth/user-not-found") {
             toast.error("Login failed. Please try again.");
           } else {
-            toast.error("User not found. Please Signup");
+            toast.error("Wrong Email & Password");
           }
         });
     }

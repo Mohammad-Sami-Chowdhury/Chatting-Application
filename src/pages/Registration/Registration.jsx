@@ -14,8 +14,12 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import { Bars } from "react-loader-spinner";
 import avatar from "../../assets/avatar.jpg";
+import { getDatabase, ref, set } from "firebase/database";
 
 function RegisterForm() {
+  const db = getDatabase();
+  const auth = getAuth();
+
   // email state
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -100,25 +104,33 @@ function RegisterForm() {
       /\d/ &&
       /[@$!%*?&]/.test(email && name && password)
     ) {
-      const auth = getAuth();
+      
       createUserWithEmailAndPassword(auth, email, password)
-        .then(() => {
+        .then((user) => {
           updateProfile(auth.currentUser, {
             displayName: name,
             photoURL: avatar,
           });
-          sendEmailVerification(auth.currentUser).then(() => {
-            setLoader(true);
-            toast.success("Please Check Your Mail");
-            setEmail("");
-            setName("");
-            setPassword("");
-            setTimeout(() => {
-              navigate("/login");
-            }, 2000).catch((error) => {
-              toast.error("A Problem Occured When Signup");
+          sendEmailVerification(auth.currentUser)
+          .then(() => {
+            console.log(user);
+            
+              setLoader(true);
+              toast.success("Please Check Your Mail");
+              setEmail("");
+              setName("");
+              setPassword("");
+              setTimeout(() => {
+                navigate("/login");
+              }, 2000);
+            })
+            .then(() => {
+              set(ref(db, "users/" + user.user.uid), {
+                username: user.user.displayName,
+                email: user.user.email,
+                profile_picture: user.user.photoURL,
+              });
             });
-          });
         })
         .catch((error) => {
           setLoader(false);
