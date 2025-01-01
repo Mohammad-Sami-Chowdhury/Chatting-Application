@@ -89,7 +89,7 @@ const FriendList = () => {
                   />
                   <div className="pl-4">
                     <p className="font-medium">{friend.name}</p>
-                    <p className="text-sm text-gray-500">{friend.email}</p>
+                    {/* <p className="text-sm text-red-500">{friend.email}</p> */}
                   </div>
                 </div>
                 <button
