@@ -1,48 +1,52 @@
 import React, { useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { getDatabase, ref, onValue, set, remove } from "firebase/database";
+import {
+  getDatabase,
+  ref,
+  onValue,
+  set,
+  remove,
+  push,
+} from "firebase/database";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 const FriendRequest = () => {
-  const data = useSelector((selector) => selector.userDetails.userInfo);
+  const data = useSelector((state) => state.userDetails.userInfo);
   const db = getDatabase();
   const [friendRequestList, setFriendRequestList] = useState([]);
 
   useEffect(() => {
-    const usersRef = ref(db, "friendRequest/");
-    onValue(usersRef, (snapshot) => {
-      let friendRequestArr = [];
+    const friendRequestsRef = ref(db, "friendRequest/");
+    onValue(friendRequestsRef, (snapshot) => {
+      let requests = [];
       snapshot.forEach((item) => {
-        if (data.uid === item.val().reciverid) {
-          friendRequestArr.push({ ...item.val(), key: item.key });
+        if (item.val().reciverid === data.uid) {
+          requests.push({ ...item.val(), key: item.key });
         }
       });
-      setFriendRequestList(friendRequestArr);
+      setFriendRequestList(requests);
     });
   }, [data.uid]);
 
   const handleAcceptRequest = (item) => {
-    const friendData = {
-      friendName: item.sendername,
-      friendEmail: item.senderemail,
-      friendProfile: item.senderProfile,
+    const newFriendEntry = {
+      senderid: item.senderid,
+      sendername: item.sendername,
+      reciverid: data.uid,
+      recivername: data.displayName,
     };
 
-    set(ref(db, `friends/${item.key}`), {
-      friendName: data.displayName,
-      friendEmail: data.email,
-      // friendProfile: data.profile_picture,
-    }),
-      friendData;
-
-    remove(ref(db, `friendRequest/${item.key}`))
+    set(push(ref(db, "friends/")), newFriendEntry)
+      .then(() => remove(ref(db, `friendRequest/${item.key}`)))
       .then(() => {
         setFriendRequestList((prev) =>
           prev.filter((request) => request.key !== item.key)
         );
+        toast.success("Friend request accepted!");
       })
       .catch((error) => {
-        console.error("Error removing request:", error);
+        console.error("Error accepting request:", error);
       });
   };
 
@@ -52,6 +56,7 @@ const FriendRequest = () => {
         setFriendRequestList((prev) =>
           prev.filter((request) => request.key !== item.key)
         );
+        toast.info("Friend request rejected!");
       })
       .catch((error) => {
         console.error("Error rejecting request:", error);
