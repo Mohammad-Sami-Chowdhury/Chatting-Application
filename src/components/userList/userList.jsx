@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import {
-  getDatabase,
-  ref,
-  onValue,
-  set,
-  push,
-  remove,
-} from "firebase/database";
+import { getDatabase, ref, onValue, set, push, remove } from "firebase/database";
 import { useSelector } from "react-redux";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 const UserList = () => {
   const data = useSelector((state) => state.userDetails.userInfo);
@@ -47,14 +40,8 @@ const UserList = () => {
       let friendsMap = {};
       snapshot.forEach((item) => {
         const friendPair = item.val();
-        if (
-          friendPair.senderid === data.uid ||
-          friendPair.reciverid === data.uid
-        ) {
-          const friendId =
-            friendPair.senderid === data.uid
-              ? friendPair.reciverid
-              : friendPair.senderid;
+        if (friendPair.senderid === data.uid || friendPair.reciverid === data.uid) {
+          const friendId = friendPair.senderid === data.uid ? friendPair.reciverid : friendPair.senderid;
           friendsMap[friendId] = true;
         }
       });
@@ -71,8 +58,10 @@ const UserList = () => {
     const newRequest = {
       sendername: data.displayName,
       senderid: data.uid,
+      senderemail: data.email,
       recivername: item.username,
       reciverid: item.userid,
+      reciveremail: item.email,
     };
 
     set(push(ref(db, "friendRequest/")), newRequest)
@@ -98,65 +87,36 @@ const UserList = () => {
   };
 
   return (
-    <div>
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar
-        closeOnClick
-        pauseOnHover
-        theme="light"
-      />
-
-      <div className="bg-white p-4 rounded-lg shadow-main">
-        <div className="flex items-center justify-between">
-          <h2 className="font-bold text-lg mb-3">User List</h2>
-          <BsThreeDotsVertical className="cursor-pointer" />
-        </div>
-        <div className="overflow-y-scroll h-[350px] scrollbar-hidden">
-          {userList.map((item) => (
-            <div
-              key={item.userid}
-              className="flex items-center justify-between mb-3"
-            >
-              <div className="flex items-center">
-                <img
-                  src={
-                    item.profile_picture || "https://via.placeholder.com/150"
-                  }
-                  alt="User Icon"
-                  className="w-12 h-12 rounded-full"
-                />
-                <div className="pl-4">
-                  <p className="font-medium">{item.username}</p>
-                  <p className="text-sm text-gray-500">{item.email}</p>
-                </div>
+    <div className="bg-white p-4 rounded-lg shadow-main">
+      <div className="flex items-center justify-between">
+        <h2 className="font-bold text-lg mb-3">User List</h2>
+        <BsThreeDotsVertical className="cursor-pointer" />
+      </div>
+      <div className="overflow-y-scroll h-[350px] scrollbar-hidden">
+        {userList.map((item) => (
+          <div key={item.userid} className="flex items-center justify-between mb-3">
+            <div className="flex items-center">
+              <img src={item.profile_picture || "https://via.placeholder.com/150"} alt="User Icon" className="w-12 h-12 rounded-full" />
+              <div className="pl-4">
+                <p className="font-medium">{item.username}</p>
+                <p className="text-sm text-gray-500">{item.email}</p>
               </div>
-              {friends[item.userid] ? (
-                <button
-                  className="bg-gray-400 text-white px-3 py-1 rounded-lg"
-                  disabled
-                >
-                  Friend
-                </button>
-              ) : friendRequests[item.userid] ? (
-                <button
-                  onClick={() => handleCancelRequest(item)}
-                  className="bg-red-500 text-white px-3 py-1 rounded-lg"
-                >
-                  Cancel
-                </button>
-              ) : (
-                <button
-                  onClick={() => handleFriendRequest(item)}
-                  className="bg-[#5F35F5] text-white px-3 py-1 rounded-lg"
-                >
-                  Add
-                </button>
-              )}
             </div>
-          ))}
-        </div>
+            {friends[item.userid] ? (
+              <button className="bg-gray-400 text-white px-3 py-1 rounded-lg" disabled>
+                Friend
+              </button>
+            ) : friendRequests[item.userid] ? (
+              <button onClick={() => handleCancelRequest(item)} className="bg-red-500 text-white px-3 py-1 rounded-lg">
+                -
+              </button>
+            ) : (
+              <button onClick={() => handleFriendRequest(item)} className="bg-[#5F35F5] font-extrabold text-white px-3 py-1 rounded-lg">
+                +
+              </button>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
