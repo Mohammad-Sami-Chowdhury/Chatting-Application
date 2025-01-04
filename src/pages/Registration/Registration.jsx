@@ -109,7 +109,7 @@ function RegisterForm() {
         .then((user) => {
           updateProfile(auth.currentUser, {
             displayName: name,
-            photoURL: avatar,
+            photoURL: avatar
           });
           sendEmailVerification(auth.currentUser)
           .then(() => {

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { getDatabase, ref, onValue, remove } from "firebase/database";
+import { getDatabase, ref, onValue, remove, set } from "firebase/database";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
 const FriendList = () => {
-  const data = useSelector((state) => state.userDetails.userInfo);
-  const db = getDatabase();
+  const data = useSelector((state) => state.userDetails.userInfo); // Redux store for user data
+  const db = getDatabase(); // Firebase database reference
   const [friendsList, setFriendsList] = useState([]);
 
   useEffect(() => {
@@ -29,9 +29,26 @@ const FriendList = () => {
         toast.success("Unfriended successfully!");
         setFriendsList((prev) => prev.filter((item) => item.key !== friend.key));
       })
-      .catch((error) => {
-        console.error("Error unfriending:", error);
-      });
+  };
+
+  const handleBlock = (friend) => {
+    const blockedUser = {
+      blockedId: friend.senderid === data.uid ? friend.reciverid : friend.senderid,
+      blockedName: friend.senderid === data.uid ? friend.recivername : friend.sendername,
+      blockedEmail: friend.senderid === data.uid ? friend.reciveremail : friend.senderemail,
+      blockedById: data.uid,
+      blockedByName: data.displayName,
+      blockedByEmail: data.email,
+    };
+
+    remove(ref(db, `friends/${friend.key}`))
+      .then(() => {
+        set(ref(db, `blockedUsers/${friend.key}`), blockedUser)
+          .then(() => {
+            toast.success("Blocked successfully!");
+            setFriendsList((prev) => prev.filter((item) => item.key !== friend.key));
+          })
+      })
   };
 
   return (
@@ -55,9 +72,20 @@ const FriendList = () => {
                   </p>
                 </div>
               </div>
-              <button onClick={() => handleUnfriend(friend)} className="bg-red-500 text-white px-4 py-1 rounded-lg">
-                Unfriend
-              </button>
+              <div className="space-x-2">
+                <button
+                  onClick={() => handleUnfriend(friend)}
+                  className="bg-red-500 text-white px-4 py-1 rounded-lg"
+                >
+                  Unfriend
+                </button>
+                <button
+                  onClick={() => handleBlock(friend)}
+                  className="bg-blue-500 text-white px-4 py-1 rounded-lg"
+                >
+                  Block
+                </button>
+              </div>
             </div>
           ))
         )}

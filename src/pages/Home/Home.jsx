@@ -45,7 +45,7 @@ const Home = () => {
             autoClose={3000}
             hideProgressBar={true}
             newestOnTop={false}
-            closeOnClick
+            closeOnClick={true}
             rtl={false}
             pauseOnFocusLoss
             draggable
