@@ -5,8 +5,8 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
 const BlockList = () => {
-  const data = useSelector((state) => state.userDetails.userInfo); // Redux store for user data
-  const db = getDatabase(); // Firebase database reference
+  const data = useSelector((state) => state.userDetails.userInfo);
+  const db = getDatabase();
   const [blockedUsers, setBlockedUsers] = useState([]);
 
   useEffect(() => {
