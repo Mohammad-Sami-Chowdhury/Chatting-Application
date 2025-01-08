@@ -16,6 +16,7 @@ const UserList = () => {
   const db = getDatabase();
   const [userList, setUserList] = useState([]);
   const [friendRequests, setFriendRequests] = useState({});
+  const [incomingFriendRequests, setIncomingFriendRequests] = useState({});
   const [friends, setFriends] = useState({});
   const [blockedUsers, setBlockedUsers] = useState({});
   const [blockedByUsers, setBlockedByUsers] = useState({});
@@ -25,8 +26,6 @@ const UserList = () => {
     onValue(usersRef, (snapshot) => {
       let arr = [];
       snapshot.forEach((item) => {
-        console.log(item);
-        
         if (data.uid !== item.key) {
           arr.push({ ...item.val(), userid: item.key });
         }
@@ -37,13 +36,18 @@ const UserList = () => {
     const friendRequestsRef = ref(db, "friendRequest/");
     onValue(friendRequestsRef, (snapshot) => {
       let requests = {};
+      let incomingRequests = {};
       snapshot.forEach((item) => {
         const request = item.val();
         if (request.senderid === data.uid) {
           requests[request.reciverid] = item.key;
         }
+        if (request.reciverid === data.uid) {
+          incomingRequests[request.senderid] = { key: item.key, ...request };
+        }
       });
       setFriendRequests(requests);
+      setIncomingFriendRequests(incomingRequests);
     });
 
     const friendsRef = ref(db, "friends/");
@@ -84,9 +88,9 @@ const UserList = () => {
   }, [data.uid]);
 
   const handleFriendRequest = (item) => {
-    console.log(item);
     if (
       friendRequests[item.userid] ||
+      incomingFriendRequests[item.userid] ||
       friends[item.userid] ||
       blockedUsers[item.userid] ||
       blockedByUsers[item.userid]
@@ -117,6 +121,44 @@ const UserList = () => {
       remove(ref(db, `friendRequest/${requestID}`)).then(() => {
         toast.success("Friend request canceled!");
       });
+    }
+  };
+
+  const handleAcceptRequest = (item) => {
+    const request = incomingFriendRequests[item.userid];
+    if (request) {
+      const newFriendEntry = {
+        senderid: request.senderid,
+        sendername: request.sendername,
+        senderemail: request.senderemail,
+        senderprofile: request.senderprofile,
+        reciverid: data.uid,
+        recivername: data.displayName,
+        reciveremail: data.email,
+        reciverprofile: data.photoURL,
+      };
+
+      set(push(ref(db, "friends/")), newFriendEntry)
+        .then(() => remove(ref(db, `friendRequest/${request.key}`)))
+        .then(() => {
+          toast.success("Friend request accepted!");
+        })
+        .catch((error) => {
+          console.error("Error accepting request:", error);
+        });
+    }
+  };
+
+  const handleRejectRequest = (item) => {
+    const request = incomingFriendRequests[item.userid];
+    if (request) {
+      remove(ref(db, `friendRequest/${request.key}`))
+        .then(() => {
+          toast.info("Friend request rejected!");
+        })
+        .catch((error) => {
+          console.error("Error rejecting request:", error);
+        });
     }
   };
 
@@ -161,6 +203,21 @@ const UserList = () => {
                 >
                   Blocked
                 </button>
+              ) : incomingFriendRequests[item.userid] ? (
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleAcceptRequest(item)}
+                    className="bg-green-500 text-white px-3 py-1 rounded-lg"
+                  >
+                    Accept
+                  </button>
+                  <button
+                    onClick={() => handleRejectRequest(item)}
+                    className="bg-red-500 text-white px-3 py-1 rounded-lg"
+                  >
+                    Reject
+                  </button>
+                </div>
               ) : friendRequests[item.userid] ? (
                 <button
                   onClick={() => handleCancelRequest(item)}
