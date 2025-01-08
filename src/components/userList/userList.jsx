@@ -25,6 +25,8 @@ const UserList = () => {
     onValue(usersRef, (snapshot) => {
       let arr = [];
       snapshot.forEach((item) => {
+        console.log(item);
+        
         if (data.uid !== item.key) {
           arr.push({ ...item.val(), userid: item.key });
         }
