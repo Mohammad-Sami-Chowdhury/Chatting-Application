@@ -104,17 +104,16 @@ function RegisterForm() {
       /\d/ &&
       /[@$!%*?&]/.test(email && name && password)
     ) {
-      
       createUserWithEmailAndPassword(auth, email, password)
         .then((user) => {
           updateProfile(auth.currentUser, {
             displayName: name,
-            photoURL: avatar
+            photoURL: avatar,
           });
           sendEmailVerification(auth.currentUser)
-          .then(() => {
-            console.log(user);
-            
+            .then(() => {
+              console.log(user);
+
               setLoader(true);
               toast.success("Please Check Your Mail");
               setEmail("");
@@ -128,7 +127,6 @@ function RegisterForm() {
               set(ref(db, "users/" + user.user.uid), {
                 username: user.user.displayName,
                 email: user.user.email,
-                profile_picture: user.user.photoURL,
               });
             });
         })

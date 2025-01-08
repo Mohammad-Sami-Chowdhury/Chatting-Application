@@ -1,27 +1,109 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import icon2 from "../../assets/icon2.png";
+import { getDatabase, onValue, ref, push } from "firebase/database";
+import { useSelector } from "react-redux";
 
 const GroupList = () => {
+  const data = useSelector((state) => state.userDetails.userInfo);
+  const db = getDatabase();
+  const [createGroup, setCreateGroup] = useState(false);
+  const [groupFocused, setEmailFocused] = useState(false);
+  const [groupName, setGroupName] = useState("");
+  const [groupList, setGroupList] = useState([]);
+
+  const handleCreateGroup = () => {
+    setCreateGroup(!createGroup);
+  };
+
+  const handleDone = () => {
+    set(push(ref(db, "groups/")), {
+      groupName: groupName,
+      admin: data.displayName,
+      adminId: data.uid,
+    }).then(() => {
+      setGroupName("");
+      setCreateGroup(false); // Close the "Create Your Group" section after creating a group
+    });
+  };
+
+  useEffect(() => {
+    const groupsRef = ref(db, "groups/");
+    onValue(groupsRef, (snapshot) => {
+      let arr = [];
+      snapshot.forEach((item) => {
+        if (data.uid !== item.val().adminId) {
+          arr.push({ ...item.val(), userid: item.key });
+        }
+      });
+      setGroupList(arr);
+    });
+  }, [db, data.uid]);
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-main">
       <div className="flex items justify-between">
         <h2 className="font-bold text-lg mb-3">Groups List</h2>
-        <BsThreeDotsVertical className="cursor-pointer" />
+        <button
+          onClick={handleCreateGroup}
+          className={`font-pops text-sm font-semibold px-2 rounded ${
+            createGroup ? "bg-red-500 text-white" : "bg-[#5F35F5] text-white"
+          }`}
+        >
+          {createGroup ? "Go Back" : "Create Group"}
+        </button>
       </div>
       <div className="overflow-y-scroll h-[350px] scrollbar-hidden">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center">
-            <img src={icon2} alt="Group Icon" className="w-12 h-12" />
-            <div className="pl-4">
-              <p className="font-medium">Friends Reunion</p>
-              <p className="text-sm text-gray-500">Hi Guys, Wassup!</p>
+        {createGroup ? (
+          <div className="mx-auto">
+            <p className="text-2xl font-bold text-center mb-8">
+              Create Your Group
+            </p>
+            <div className="relative mb-6 flex justify-center">
+              <label
+                className={`absolute tracking-[2px] left-[100px] px-1 text-sm transition-all duration-200 ${
+                  groupName || groupFocused
+                    ? "-top-2 bg-white text-[#5F35F5]"
+                    : "md:top-7 top-4 text-gray-500"
+                }`}
+              >
+                Group Name
+              </label>
+              <input
+                type="text"
+                value={groupName}
+                onChange={(e) => setGroupName(e.target.value)}
+                onFocus={() => setEmailFocused(true)}
+                onBlur={() => setEmailFocused(false)}
+                className="border border-gray-300 bg-transparent w-[300px] md:w-[368px] md:py-[26px] md:pl-[52px] p-4 rounded-md focus:outline-[#5F35F5]"
+              />
             </div>
+            <button
+              onClick={handleDone}
+              className="bg-[#5F35F5] px-4 py-2 flex mx-auto rounded text-base text-white font-bold"
+            >
+              Done
+            </button>
           </div>
-          <button className="bg-[#5F35F5] text-white px-4 py-1 rounded-lg">
-            Join
-          </button>
-        </div>
+        ) : (
+          groupList.map((item) => (
+            <div
+              className="flex items-center justify-between mb-3"
+              key={item.userid}
+            >
+              <div className="flex items-center">
+                <img src={icon2} alt="Group Icon" className="w-12 h-12" />
+                <div className="pl-4">
+                  <p className="font-medium">{item.groupName}</p>
+                  <p className="text-sm text-gray-500">Hi Guys, Wassup!</p>
+                </div>
+              </div>
+              <button className="bg-[#5F35F5] text-white px-4 py-1 rounded-lg">
+                Join
+              </button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

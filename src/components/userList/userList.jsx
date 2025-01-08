@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { getDatabase, ref, onValue, set, push, remove } from "firebase/database";
+import {
+  getDatabase,
+  ref,
+  onValue,
+  set,
+  push,
+  remove,
+} from "firebase/database";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
@@ -42,8 +49,14 @@ const UserList = () => {
       let friendsMap = {};
       snapshot.forEach((item) => {
         const friendPair = item.val();
-        if (friendPair.senderid === data.uid || friendPair.reciverid === data.uid) {
-          const friendId = friendPair.senderid === data.uid ? friendPair.reciverid : friendPair.senderid;
+        if (
+          friendPair.senderid === data.uid ||
+          friendPair.reciverid === data.uid
+        ) {
+          const friendId =
+            friendPair.senderid === data.uid
+              ? friendPair.reciverid
+              : friendPair.senderid;
           friendsMap[friendId] = true;
         }
       });
@@ -69,7 +82,13 @@ const UserList = () => {
   }, [data.uid]);
 
   const handleFriendRequest = (item) => {
-    if (friendRequests[item.userid] || friends[item.userid] || blockedUsers[item.userid] || blockedByUsers[item.userid]) {
+    console.log(item);
+    if (
+      friendRequests[item.userid] ||
+      friends[item.userid] ||
+      blockedUsers[item.userid] ||
+      blockedByUsers[item.userid]
+    ) {
       toast.warning("Action not allowed.");
       return;
     }
@@ -78,24 +97,24 @@ const UserList = () => {
       sendername: data.displayName,
       senderid: data.uid,
       senderemail: data.email,
+      senderprofile: data.photoURL,
       recivername: item.username,
       reciverid: item.userid,
       reciveremail: item.email,
+      reciverprofile: item.profile_picture,
     };
 
-    set(push(ref(db, "friendRequest/")), newRequest)
-      .then(() => {
-        toast.success("Friend request sent!");
-      })
+    set(push(ref(db, "friendRequest/")), newRequest).then(() => {
+      toast.success("Friend request sent!");
+    });
   };
 
   const handleCancelRequest = (item) => {
     const requestID = friendRequests[item.userid];
     if (requestID) {
-      remove(ref(db, `friendRequest/${requestID}`))
-        .then(() => {
-          toast.success("Friend request canceled!");
-        })
+      remove(ref(db, `friendRequest/${requestID}`)).then(() => {
+        toast.success("Friend request canceled!");
+      });
     }
   };
 
@@ -109,10 +128,15 @@ const UserList = () => {
         {userList
           .filter((user) => !blockedByUsers[user.userid]) // Exclude users who blocked the current user
           .map((item) => (
-            <div key={item.userid} className="flex items-center justify-between mb-3">
+            <div
+              key={item.userid}
+              className="flex items-center justify-between mb-3"
+            >
               <div className="flex items-center">
                 <img
-                  src={item.profile_picture || "https://via.placeholder.com/150"}
+                  src={
+                    item.profile_picture || "https://via.placeholder.com/150"
+                  }
                   alt="User Icon"
                   className="w-12 h-12 rounded-full"
                 />
@@ -122,19 +146,31 @@ const UserList = () => {
                 </div>
               </div>
               {friends[item.userid] ? (
-                <button className="bg-gray-400 text-white px-3 py-1 rounded-lg" disabled>
+                <button
+                  className="bg-gray-400 text-white px-3 py-1 rounded-lg"
+                  disabled
+                >
                   Friend
                 </button>
               ) : blockedUsers[item.userid] ? (
-                <button className="bg-red-500 text-white px-3 py-1 rounded-lg" disabled>
+                <button
+                  className="bg-red-500 text-white px-3 py-1 rounded-lg"
+                  disabled
+                >
                   Blocked
                 </button>
               ) : friendRequests[item.userid] ? (
-                <button onClick={() => handleCancelRequest(item)} className="bg-red-500 text-white px-3 py-1 rounded-lg">
+                <button
+                  onClick={() => handleCancelRequest(item)}
+                  className="bg-red-500 text-white px-3 py-1 rounded-lg"
+                >
                   Cancel Request
                 </button>
               ) : (
-                <button onClick={() => handleFriendRequest(item)} className="bg-[#5F35F5] font-extrabold text-white px-3 py-1 rounded-lg">
+                <button
+                  onClick={() => handleFriendRequest(item)}
+                  className="bg-[#5F35F5] font-extrabold text-white px-3 py-1 rounded-lg"
+                >
                   Add Friend
                 </button>
               )}
@@ -146,4 +182,3 @@ const UserList = () => {
 };
 
 export default UserList;
-

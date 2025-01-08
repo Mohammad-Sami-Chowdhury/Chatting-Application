@@ -15,7 +15,10 @@ const FriendList = () => {
       let friendsArr = [];
       snapshot.forEach((item) => {
         const friendPair = item.val();
-        if (friendPair.senderid === data.uid || friendPair.reciverid === data.uid) {
+        if (
+          friendPair.senderid === data.uid ||
+          friendPair.reciverid === data.uid
+        ) {
           friendsArr.push({ ...friendPair, key: item.key });
         }
       });
@@ -24,31 +27,40 @@ const FriendList = () => {
   }, [data.uid]);
 
   const handleUnfriend = (friend) => {
-    remove(ref(db, `friends/${friend.key}`))
-      .then(() => {
-        toast.success("Unfriended successfully!");
-        setFriendsList((prev) => prev.filter((item) => item.key !== friend.key));
-      })
+    remove(ref(db, `friends/${friend.key}`)).then(() => {
+      toast.success("Unfriended successfully!");
+      setFriendsList((prev) => prev.filter((item) => item.key !== friend.key));
+    });
   };
 
   const handleBlock = (friend) => {
+    console.log(friend);
+
     const blockedUser = {
-      blockedId: friend.senderid === data.uid ? friend.reciverid : friend.senderid,
-      blockedName: friend.senderid === data.uid ? friend.recivername : friend.sendername,
-      blockedEmail: friend.senderid === data.uid ? friend.reciveremail : friend.senderemail,
+      blockedId:
+        friend.senderid === data.uid ? friend.reciverid : friend.senderid,
+      blockedName:
+        friend.senderid === data.uid ? friend.recivername : friend.sendername,
+      blockedEmail:
+        friend.senderid === data.uid ? friend.reciveremail : friend.senderemail,
+      blockedprofile:
+        friend.senderid === data.uid
+          ? friend.reciverprofile
+          : friend.senderprofile,
       blockedById: data.uid,
       blockedByName: data.displayName,
       blockedByEmail: data.email,
+      blockedByPhoto: data.photoURL,
     };
 
-    remove(ref(db, `friends/${friend.key}`))
-      .then(() => {
-        set(ref(db, `blockedUsers/${friend.key}`), blockedUser)
-          .then(() => {
-            toast.success("Blocked successfully!");
-            setFriendsList((prev) => prev.filter((item) => item.key !== friend.key));
-          })
-      })
+    remove(ref(db, `friends/${friend.key}`)).then(() => {
+      set(ref(db, `blockedUsers/${friend.key}`), blockedUser).then(() => {
+        toast.success("Blocked successfully!");
+        setFriendsList((prev) =>
+          prev.filter((item) => item.key !== friend.key)
+        );
+      });
+    });
   };
 
   return (
@@ -62,13 +74,31 @@ const FriendList = () => {
           <p>No friends yet</p>
         ) : (
           friendsList.map((friend) => (
-            <div key={friend.key} className="flex items-center justify-between mb-3">
+            <div
+              key={friend.key}
+              className="flex items-center justify-between mb-3"
+            >
               <div className="flex items-center">
-                <img src={"https://via.placeholder.com/150"} alt="Friend Icon" className="w-12 h-12 rounded-full" />
+                <img
+                  src={
+                    friend.senderid === data.uid
+                      ? friend.reciverprofile
+                      : friend.senderprofile ||
+                        "https://via.placeholder.com/150"
+                  }
+                  alt="Friend Icon"
+                  className="w-12 h-12 rounded-full"
+                />
                 <div className="pl-4">
-                  <p className="font-medium">{friend.senderid === data.uid ? friend.recivername : friend.sendername}</p>
+                  <p className="font-medium">
+                    {friend.senderid === data.uid
+                      ? friend.recivername
+                      : friend.sendername}
+                  </p>
                   <p className="text-sm text-gray-500">
-                    {friend.senderid === data.uid ? friend.reciveremail : friend.senderemail}
+                    {friend.senderid === data.uid
+                      ? friend.reciveremail
+                      : friend.senderemail}
                   </p>
                 </div>
               </div>

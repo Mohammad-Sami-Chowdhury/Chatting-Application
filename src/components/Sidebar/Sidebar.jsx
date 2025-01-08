@@ -22,12 +22,14 @@ import { getAuth, updateProfile } from "firebase/auth";
 import { useSelector } from "react-redux";
 import { userLoginInfo } from "../../slices/userSlice";
 import { useDispatch } from "react-redux";
+import { getDatabase, set, ref as dref } from "firebase/database";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
   const storage = getStorage();
   const auth = getAuth();
   const data = useSelector((data) => data.userDetails.userInfo);
+  const db = getDatabase();
 
   const [active, setActive] = useState("home");
   const [click, setClick] = useState(false);
@@ -95,18 +97,26 @@ const Sidebar = () => {
       updateProfile(auth.currentUser, {
         displayName: data.displayName,
         photoURL: downloadURL,
-      }).then(() => {
-        toast.success("Profile Updated Successfully");
-        setImage(null);
-        setCroppedImage(null);
-        let sstorage = localStorage.getItem("userLoginInfo");
-        let userUpdate = {
-          ...JSON.parse(sstorage),
-          photoURL: downloadURL,
-        };
-        localStorage.setItem("userLoginInfo", JSON.stringify(userUpdate));
-        dispatch(userLoginInfo(userUpdate));
-      });
+      })
+        .then(() => {
+          set(dref(db, "users/" + data.uid), {
+            username: data.displayName,
+            email: data.email,
+            profile_picture: data.photoURL,
+          });
+        })
+        .then(() => {
+          toast.success("Profile Updated Successfully");
+          setImage(null);
+          setCroppedImage(null);
+          let sstorage = localStorage.getItem("userLoginInfo");
+          let userUpdate = {
+            ...JSON.parse(sstorage),
+            photoURL: downloadURL,
+          };
+          localStorage.setItem("userLoginInfo", JSON.stringify(userUpdate));
+          dispatch(userLoginInfo(userUpdate));
+        });
     });
   };
 

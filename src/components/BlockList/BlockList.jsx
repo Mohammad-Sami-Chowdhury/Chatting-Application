@@ -24,23 +24,27 @@ const BlockList = () => {
   }, [data.uid]);
 
   const handleUnblock = (blockedUser) => {
+    console.log(blockedUser);
+
     const friend = {
       senderid: blockedUser.blockedById,
       sendername: blockedUser.blockedByName,
       senderemail: blockedUser.blockedByEmail,
+      senderprofile: blockedUser.blockedByPhoto,
       reciverid: blockedUser.blockedId,
       recivername: blockedUser.blockedName,
       reciveremail: blockedUser.blockedEmail,
+      reciverprofile: blockedUser.blockedprofile,
     };
 
-    remove(ref(db, `blockedUsers/${blockedUser.key}`))
-      .then(() => {
-        set(ref(db, `friends/${blockedUser.key}`), friend)
-          .then(() => {
-            toast.success("Unblocked successfully!");
-            setBlockedUsers((prev) => prev.filter((item) => item.key !== blockedUser.key));
-          })
-      })
+    remove(ref(db, `blockedUsers/${blockedUser.key}`)).then(() => {
+      set(ref(db, `friends/${blockedUser.key}`), friend).then(() => {
+        toast.success("Unblocked successfully!");
+        setBlockedUsers((prev) =>
+          prev.filter((item) => item.key !== blockedUser.key)
+        );
+      });
+    });
   };
 
   return (
@@ -54,9 +58,19 @@ const BlockList = () => {
           <p>No blocked users</p>
         ) : (
           blockedUsers.map((blockedUser) => (
-            <div key={blockedUser.key} className="flex items-center justify-between mb-3">
+            <div
+              key={blockedUser.key}
+              className="flex items-center justify-between mb-3"
+            >
               <div className="flex items-center">
-                <img src={"https://via.placeholder.com/150"} alt="Blocked Icon" className="w-12 h-12 rounded-full" />
+                <img
+                  src={
+                    blockedUser.blockedprofile ||
+                    "https://via.placeholder.com/150"
+                  }
+                  alt="Blocked Icon"
+                  className="w-12 h-12 rounded-full"
+                />
                 <div className="pl-4">
                   <p className="font-medium">{blockedUser.blockedName}</p>
                 </div>
