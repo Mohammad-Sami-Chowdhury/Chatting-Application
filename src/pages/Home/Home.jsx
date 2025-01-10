@@ -7,11 +7,11 @@ import { onAuthStateChanged, getAuth } from "firebase/auth";
 import { toast, ToastContainer } from "react-toastify";
 import "../../index.css";
 import UserList from "../../components/userList/userList";
-import FriendRequest from "../../components/FriendRequest/FriendRequest";
 import FriendList from "../../components/FriendList/FriendList";
 import BlockList from "../../components/BlockList/BlockList";
 import GroupList from "../../components/GroupList/GroupList";
 import MyGroup from "../../components/MyGroup/MyGroup";
+import Requests from "../../components/Requests/Requests";
 
 const Home = () => {
   const auth = getAuth();
@@ -79,7 +79,7 @@ const Home = () => {
               {/* User List */}
               <UserList />
               {/* Friend Requests */}
-              <FriendRequest />
+              <Requests/>
               {/* My Groups */}
               <MyGroup />
               {/* Blocked Users */}

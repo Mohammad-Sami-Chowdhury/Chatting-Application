@@ -53,11 +53,13 @@ const GroupList = () => {
   }, [db, data.uid]);
 
   // Send a join request
-  const handleJoinRequest = (groupId) => {
+  const handleJoinRequest = (groupId, groupName) => {
     set(push(ref(db, `joinRequests/${groupId}/`)), {
       uid: data.uid,
       name: data.displayName,
       email: data.email,
+      groupName: groupName,
+      adminId: groupList.find((group) => group.groupId === groupId).adminId, // Ensure adminId is included
     }).then(() => {
       toast.success("Join request sent!");
     });
@@ -123,7 +125,7 @@ const GroupList = () => {
                 </div>
               </div>
               <button
-                onClick={() => handleJoinRequest(item.groupId)}
+                onClick={() => handleJoinRequest(item.groupId, item.groupName)}
                 className="bg-[#5F35F5] text-white px-4 py-1 rounded-lg"
               >
                 Join
