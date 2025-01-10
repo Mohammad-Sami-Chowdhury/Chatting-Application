@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { BsThreeDotsVertical } from "react-icons/bs";
 import { getDatabase, onValue, ref, push, set } from "firebase/database";
 import { useSelector } from "react-redux";
 import icon2 from "../../assets/icon2.png";
+import { toast } from "react-toastify";
 
 const GroupList = () => {
   const data = useSelector((state) => state.userDetails.userInfo);
@@ -43,7 +43,8 @@ const GroupList = () => {
     onValue(groupsRef, (snapshot) => {
       let arr = [];
       snapshot.forEach((item) => {
-        if (data.uid !== item.val().adminId) {  // Hide the group created by the user
+        if (data.uid !== item.val().adminId) {
+          // Hide the group created by the user
           arr.push({ ...item.val(), groupId: item.key });
         }
       });
@@ -58,7 +59,7 @@ const GroupList = () => {
       name: data.displayName,
       email: data.email,
     }).then(() => {
-      alert("Join request sent!");
+      toast.success("Join request sent!");
     });
   };
 
@@ -68,7 +69,9 @@ const GroupList = () => {
         <h2 className="font-bold text-lg mb-3">Groups List</h2>
         <button
           onClick={handleCreateGroup}
-          className={`font-pops text-sm font-semibold px-2 rounded ${createGroup ? "bg-red-500 text-white" : "bg-[#5F35F5] text-white"}`}
+          className={`font-pops text-sm font-semibold px-2 rounded ${
+            createGroup ? "bg-red-500 text-white" : "bg-[#5F35F5] text-white"
+          }`}
         >
           {createGroup ? "Go Back" : "Create Group"}
         </button>
@@ -77,10 +80,16 @@ const GroupList = () => {
       <div className="overflow-y-scroll h-[350px] scrollbar-hidden">
         {createGroup ? (
           <div className="mx-auto">
-            <p className="text-2xl font-bold text-center mb-8">Create Your Group</p>
+            <p className="text-2xl font-bold text-center mb-8">
+              Create Your Group
+            </p>
             <div className="relative mb-6 flex justify-center">
               <label
-                className={`absolute tracking-[2px] left-[100px] px-1 text-sm transition-all duration-200 ${groupName || groupFocused ? "-top-2 bg-white text-[#5F35F5]" : "md:top-7 top-4 text-gray-500"}`}
+                className={`absolute tracking-[2px] left-[100px] px-1 text-sm transition-all duration-200 ${
+                  groupName || groupFocused
+                    ? "-top-2 bg-white text-[#5F35F5]"
+                    : "md:top-7 top-4 text-gray-500"
+                }`}
               >
                 Group Name
               </label>
@@ -102,7 +111,10 @@ const GroupList = () => {
           </div>
         ) : (
           groupList.map((item) => (
-            <div className="flex items-center justify-between mb-3" key={item.groupId}>
+            <div
+              className="flex items-center justify-between mb-3"
+              key={item.groupId}
+            >
               <div className="flex items-center">
                 <img src={icon2} alt="Group Icon" className="w-12 h-12" />
                 <div className="pl-4">

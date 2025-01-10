@@ -30,8 +30,6 @@ const FriendRequest = () => {
   }, [data.uid]);
 
   const handleAcceptRequest = (item) => {
-    console.log(item);
-
     const newFriendEntry = {
       senderid: item.senderid,
       sendername: item.sendername,
@@ -52,7 +50,7 @@ const FriendRequest = () => {
         toast.success("Friend request accepted!");
       })
       .catch((error) => {
-        console.error("Error accepting request:", error);
+        toast.error("Error accepting request:", error);
       });
   };
 
@@ -65,7 +63,7 @@ const FriendRequest = () => {
         toast.info("Friend request rejected!");
       })
       .catch((error) => {
-        console.error("Error rejecting request:", error);
+        toast.error("Error rejecting request:", error);
       });
   };
 

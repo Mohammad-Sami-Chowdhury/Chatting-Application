@@ -24,8 +24,6 @@ const BlockList = () => {
   }, [data.uid]);
 
   const handleUnblock = (blockedUser) => {
-    console.log(blockedUser);
-
     const friend = {
       senderid: blockedUser.blockedById,
       sendername: blockedUser.blockedByName,

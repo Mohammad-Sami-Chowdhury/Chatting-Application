@@ -112,8 +112,6 @@ function RegisterForm() {
           });
           sendEmailVerification(auth.currentUser)
             .then(() => {
-              console.log(user);
-
               setLoader(true);
               toast.success("Please Check Your Mail");
               setEmail("");

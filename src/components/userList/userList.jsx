@@ -144,7 +144,7 @@ const UserList = () => {
           toast.success("Friend request accepted!");
         })
         .catch((error) => {
-          console.error("Error accepting request:", error);
+          toast.error("Error accepting request:", error);
         });
     }
   };
@@ -157,7 +157,7 @@ const UserList = () => {
           toast.info("Friend request rejected!");
         })
         .catch((error) => {
-          console.error("Error rejecting request:", error);
+          toast.error("Error rejecting request:", error);
         });
     }
   };

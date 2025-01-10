@@ -11,55 +11,69 @@ const MyGroup = () => {
   const [myGroups, setMyGroups] = useState([]);
   const [joinRequests, setJoinRequests] = useState([]);
 
-  // Fetch groups created by the user
+  // Fetch groups created by the user and their join requests
   useEffect(() => {
     const groupsRef = ref(db, "groups/");
+    const joinRequestsRef = ref(db, "joinRequests/");
+
+    // Fetch admin's groups
     onValue(groupsRef, (snapshot) => {
-      let arr = [];
+      let adminGroups = [];
       snapshot.forEach((item) => {
-        if (data.uid === item.val().adminId) {
-          arr.push({ ...item.val(), groupId: item.key });
+        if (item.val().adminId === data.uid) {
+          adminGroups.push(item.key); // Collect admin's group IDs
         }
       });
-      setMyGroups(arr);
-    });
 
-    const joinRequestsRef = ref(db, "joinRequests/");
-    onValue(joinRequestsRef, (snapshot) => {
-      let requestsArr = [];
-      console.log("Join Requests Raw Snapshot:", snapshot.val()); // Debug: Log raw snapshot
-      snapshot.forEach((groupItem) => {
-        groupItem.forEach((requestItem) => {
-          console.log("Processing Request:", requestItem.val()); // Debug: Log each request item
-          requestsArr.push({ ...requestItem.val(), groupId: groupItem.key });
+      // Fetch join requests for admin's groups
+      onValue(joinRequestsRef, (snapshot) => {
+        let requestsArr = [];
+        adminGroups.forEach((groupId) => {
+          if (snapshot.hasChild(groupId)) {
+            snapshot.child(groupId).forEach((request) => {
+              requestsArr.push({
+                ...request.val(),
+                groupId,
+                userId: request.key,
+              });
+            });
+          }
         });
+        setJoinRequests(requestsArr);
       });
-      console.log("Processed Join Requests:", requestsArr); // Debug: Log processed join requests
-      setJoinRequests(requestsArr);
     });
-  }, [db, data.uid]);
+  }, []);
 
-  // Accept join request and add the user to the members collection of the group
+  // Accept join request and add the user to the group
   const handleAcceptJoinRequest = (groupId, userId) => {
     const requestRef = ref(db, `joinRequests/${groupId}/${userId}`);
-    const groupRef = ref(db, `groups/${groupId}/members/${userId}`);
+    const groupMembersRef = ref(db, `groups/${groupId}/members/${userId}`);
 
     onValue(requestRef, (snapshot) => {
       if (snapshot.exists()) {
         const request = snapshot.val();
-        set(groupRef, {
+
+        // Add user to group members
+        set(groupMembersRef, {
           uid: userId,
           name: request.name,
           email: request.email,
-        }).then(() => {
-          remove(requestRef).then(() => {
-            toast.success("Request accepted and user added to the group!");
+        })
+          .then(() => {
+            // Remove the request
+            remove(requestRef)
+              .then(() => {
+                toast.success("User successfully added to the group!");
+              })
+              .catch((error) => {
+                toast.error("Error removing join request: " + error.message);
+              });
+          })
+          .catch((error) => {
+            toast.error("Error adding user to group: " + error.message);
           });
-        }).catch((error) => {
-          toast.error("Error adding user to group: " + error.message);
-        });
       } else {
-        toast.error("Request not found.");
+        toast.error("Join request not found.");
       }
     });
   };
@@ -67,26 +81,33 @@ const MyGroup = () => {
   // Reject join request
   const handleRejectJoinRequest = (groupId, userId) => {
     const requestRef = ref(db, `joinRequests/${groupId}/${userId}`);
-    remove(requestRef).then(() => {
-      toast.info("Request rejected.");
-    }).catch((error) => {
-      toast.error("Error rejecting request: " + error.message);
-    });
+    remove(requestRef)
+      .then(() => {
+        toast.info("Join request rejected.");
+      })
+      .catch((error) => {
+        toast.error("Error rejecting join request: " + error.message);
+      });
   };
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-main">
-      <div className="flex items justify-between">
+      <div className="flex items-center justify-between">
         <h2 className="font-bold text-lg mb-3">My Groups</h2>
         <BsThreeDotsVertical className="cursor-pointer" />
       </div>
+
+      {/* List of groups created by the user */}
       <div className="overflow-y-scroll h-[340px] scrollbar-hidden">
-        {myGroups.map((item) => (
-          <div className="flex items-center justify-between mb-3" key={item.groupId}>
+        {myGroups.map((group) => (
+          <div
+            className="flex items-center justify-between mb-3"
+            key={group.groupId}
+          >
             <div className="flex items-center">
               <img src={icon7} alt="Group Icon" className="w-12 h-12" />
               <div className="pl-4">
-                <p className="font-medium">{item.groupName}</p>
+                <p className="font-medium">{group.groupName}</p>
               </div>
             </div>
             <p className="text-sm text-gray-400">Yesterday, 6:22pm</p>
@@ -94,6 +115,7 @@ const MyGroup = () => {
         ))}
       </div>
 
+      {/* Join Requests Section */}
       <div className="mt-4">
         <h2 className="font-bold text-lg mb-3">Join Requests</h2>
         <div className="overflow-y-scroll h-[200px] scrollbar-hidden">
@@ -101,7 +123,10 @@ const MyGroup = () => {
             <p className="text-gray-500">No join requests found.</p>
           ) : (
             joinRequests.map((request) => (
-              <div className="flex items-center justify-between mb-3" key={request.uid}>
+              <div
+                className="flex items-center justify-between mb-3"
+                key={request.userId}
+              >
                 <div className="flex items-center">
                   <img src={icon7} alt="User Icon" className="w-12 h-12" />
                   <div className="pl-4">
@@ -111,13 +136,17 @@ const MyGroup = () => {
                 </div>
                 <div className="flex space-x-2">
                   <button
-                    onClick={() => handleAcceptJoinRequest(request.groupId, request.uid)}
+                    onClick={() =>
+                      handleAcceptJoinRequest(request.groupId, request.userId)
+                    }
                     className="bg-green-500 text-white px-4 py-1 rounded-lg"
                   >
                     Accept
                   </button>
                   <button
-                    onClick={() => handleRejectJoinRequest(request.groupId, request.uid)}
+                    onClick={() =>
+                      handleRejectJoinRequest(request.groupId, request.userId)
+                    }
                     className="bg-red-500 text-white px-4 py-1 rounded-lg"
                   >
                     Reject

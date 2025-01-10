@@ -34,8 +34,6 @@ const FriendList = () => {
   };
 
   const handleBlock = (friend) => {
-    console.log(friend);
-
     const blockedUser = {
       blockedId:
         friend.senderid === data.uid ? friend.reciverid : friend.senderid,
