@@ -91,8 +91,6 @@ const Requests = () => {
   const handleAcceptGroupJoinRequest = (groupId, userId) => {
     const requestRef = ref(db, `joinRequests/${groupId}/${userId}`);
     const groupMembersRef = ref(db, `groups/${groupId}/members/${userId}`);
-    const userGroupsRef = ref(db, `users/${userId}/groups/${groupId}`);
-
     onValue(requestRef, (snapshot) => {
       if (snapshot.exists()) {
         const request = snapshot.val();
@@ -102,39 +100,17 @@ const Requests = () => {
           uid: userId,
           name: request.name,
           email: request.email,
-        })
-          .then(() => {
-            // Add group to user's groups list
-            set(userGroupsRef, {
-              groupId: groupId,
-              groupName: request.groupName,
-            })
-              .then(() => {
-                // Remove the request
-                remove(requestRef)
-                  .then(() => {
-                    setGroupJoinRequests((prev) =>
-                      prev.filter(
-                        (req) => req.key !== userId || req.groupId !== groupId
-                      )
-                    );
-                    toast.success("User successfully added to the group!");
-                  })
-                  .catch((error) => {
-                    toast.error(
-                      "Error removing join request: " + error.message
-                    );
-                  });
-              })
-              .catch((error) => {
-                toast.error("Error adding group to user: " + error.message);
-              });
-          })
-          .catch((error) => {
-            toast.error("Error adding user to group: " + error.message);
+        }).then(() => {
+          // Remove the request
+          remove(requestRef).then(() => {
+            setGroupJoinRequests((prev) =>
+              prev.filter(
+                (req) => req.key !== userId || req.groupId !== groupId
+              )
+            );
+            toast.success("User successfully added to the group!");
           });
-      } else {
-        toast.error("Join request not found.");
+        });
       }
     });
   };

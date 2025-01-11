@@ -15,7 +15,6 @@ const MyGroup = () => {
   useEffect(() => {
     const groupsRef = ref(db, "groups/");
     const joinRequestsRef = ref(db, "joinRequests/");
-    const userGroupsRef = ref(db, `users/${data.uid}/groups/`);
 
     // Fetch admin's groups
     onValue(groupsRef, (snapshot) => {
@@ -31,8 +30,6 @@ const MyGroup = () => {
           // Collect admin's group details
         }
       });
-      console.log(adminGroupsDetails);
-
       setMyGroups(adminGroupsDetails); // Set myGroups state with fetched groups
 
       // Fetch join requests for admin's groups

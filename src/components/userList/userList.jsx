@@ -20,6 +20,7 @@ const UserList = () => {
   const [friends, setFriends] = useState({});
   const [blockedUsers, setBlockedUsers] = useState({});
   const [blockedByUsers, setBlockedByUsers] = useState({});
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
 
   useEffect(() => {
     const usersRef = ref(db, "users/");
@@ -162,79 +163,93 @@ const UserList = () => {
     }
   };
 
+  const filteredUsers = userList.filter(
+    (user) =>
+      !blockedByUsers[user.userid] &&
+      (user.username
+        .toLowerCase()
+        .startsWith(searchQuery.toLowerCase()) || // Match first letter
+        user.username.toLowerCase().startsWith(searchQuery.toLowerCase())) // Match email by first letter
+  );
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-main">
+      <div>
+        <input
+          type="text"
+          placeholder="Search Users"
+          className="w-full py-2 px-2 border-[#5F35F5] border rounded outline-none"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)} // Update search query
+        />
+      </div>
       <div className="flex items-center justify-between">
         <h2 className="font-bold text-lg mb-3">User List</h2>
         <BsThreeDotsVertical className="cursor-pointer" />
       </div>
       <div className="overflow-y-scroll h-[350px] scrollbar-hidden">
-        {userList
-          .filter((user) => !blockedByUsers[user.userid]) // Exclude users who blocked the current user
-          .map((item) => (
-            <div
-              key={item.userid}
-              className="flex items-center justify-between mb-3"
-            >
-              <div className="flex items-center">
-                <img
-                  src={
-                    item.profile_picture || "https://via.placeholder.com/150"
-                  }
-                  alt="User Icon"
-                  className="w-12 h-12 rounded-full"
-                />
-                <div className="pl-4">
-                  <p className="font-medium">{item.username}</p>
-                  <p className="text-sm text-gray-500">{item.email}</p>
-                </div>
+        {filteredUsers.map((item) => (
+          <div
+            key={item.userid}
+            className="flex items-center justify-between mb-3"
+          >
+            <div className="flex items-center">
+              <img
+                src={item.profile_picture || "https://via.placeholder.com/150"}
+                alt="User Icon"
+                className="w-12 h-12 rounded-full"
+              />
+              <div className="pl-4">
+                <p className="font-medium">{item.username}</p>
+                <p className="text-sm text-gray-500">{item.email}</p>
               </div>
-              {friends[item.userid] ? (
-                <button
-                  className="bg-gray-400 text-white px-3 py-1 rounded-lg"
-                  disabled
-                >
-                  Friend
-                </button>
-              ) : blockedUsers[item.userid] ? (
-                <button
-                  className="bg-red-500 text-white px-3 py-1 rounded-lg"
-                  disabled
-                >
-                  Blocked
-                </button>
-              ) : incomingFriendRequests[item.userid] ? (
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleAcceptRequest(item)}
-                    className="bg-green-500 text-white px-3 py-1 rounded-lg"
-                  >
-                    Accept
-                  </button>
-                  <button
-                    onClick={() => handleRejectRequest(item)}
-                    className="bg-red-500 text-white px-3 py-1 rounded-lg"
-                  >
-                    Reject
-                  </button>
-                </div>
-              ) : friendRequests[item.userid] ? (
-                <button
-                  onClick={() => handleCancelRequest(item)}
-                  className="bg-red-500 text-white px-3 py-1 rounded-lg"
-                >
-                  Cancel Request
-                </button>
-              ) : (
-                <button
-                  onClick={() => handleFriendRequest(item)}
-                  className="bg-[#5F35F5] font-extrabold text-white px-3 py-1 rounded-lg"
-                >
-                  Add Friend
-                </button>
-              )}
             </div>
-          ))}
+            {friends[item.userid] ? (
+              <button
+                className="bg-gray-400 text-white px-3 py-1 rounded-lg"
+                disabled
+              >
+                Friend
+              </button>
+            ) : blockedUsers[item.userid] ? (
+              <button
+                className="bg-red-500 text-white px-3 py-1 rounded-lg"
+                disabled
+              >
+                Blocked
+              </button>
+            ) : incomingFriendRequests[item.userid] ? (
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleAcceptRequest(item)}
+                  className="bg-green-500 text-white px-3 py-1 rounded-lg"
+                >
+                  Accept
+                </button>
+                <button
+                  onClick={() => handleRejectRequest(item)}
+                  className="bg-red-500 text-white px-3 py-1 rounded-lg"
+                >
+                  Reject
+                </button>
+              </div>
+            ) : friendRequests[item.userid] ? (
+              <button
+                onClick={() => handleCancelRequest(item)}
+                className="bg-red-500 text-white px-3 py-1 rounded-lg"
+              >
+                Cancel Request
+              </button>
+            ) : (
+              <button
+                onClick={() => handleFriendRequest(item)}
+                className="bg-[#5F35F5] font-extrabold text-white px-3 py-1 rounded-lg"
+              >
+                Add Friend
+              </button>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
