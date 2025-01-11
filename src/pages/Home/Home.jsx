@@ -37,7 +37,7 @@ const Home = () => {
   }, [auth, navigate]);
 
   return (
-    <>
+    <section className="gap-x-10 mx-4 my-4">
       {verify ? (
         <div className="flex flex-col md:flex-row h-screen overflow-hidden">
           <ToastContainer
@@ -54,7 +54,7 @@ const Home = () => {
             transition:Bounce
           />
           {/* Sidebar */}
-          <div className="w-full md:w-[10%] bg-gray-100 p-4 overflow-auto">
+          <div>
             <Sidebar />
           </div>
 
@@ -79,7 +79,7 @@ const Home = () => {
               {/* User List */}
               <UserList />
               {/* Friend Requests */}
-              <Requests/>
+              <Requests />
               {/* My Groups */}
               <MyGroup />
               {/* Blocked Users */}
@@ -90,7 +90,7 @@ const Home = () => {
       ) : (
         ""
       )}
-    </>
+    </section>
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import icon1 from "../../assets/icon1.png";
+import { useLocation } from "react-router-dom";
 import { FaRegBell } from "react-icons/fa6";
 import { FaCloudUploadAlt, FaRegWindowClose } from "react-icons/fa";
 import { Cropper } from "react-cropper";
@@ -23,16 +23,17 @@ import { useSelector } from "react-redux";
 import { userLoginInfo } from "../../slices/userSlice";
 import { useDispatch } from "react-redux";
 import { getDatabase, set, ref as dref } from "firebase/database";
+import { Link } from "react-router-dom";
 
 const Sidebar = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
   const storage = getStorage();
   const auth = getAuth();
   const data = useSelector((data) => data.userDetails.userInfo);
   const db = getDatabase();
-
-  const [active, setActive] = useState("home");
   const [click, setClick] = useState(false);
+  const [active, setActive] = useState(location.pathname);
 
   const handleClick = () => {
     setClick(true);
@@ -40,6 +41,15 @@ const Sidebar = () => {
   const handleClose = () => {
     setClick(false);
   };
+
+  const handleSetActive = (path) => setActive(path);
+
+  const navItems = [
+    { path: "/home", icon: <IoHomeOutline className="text-[40px]" /> },
+    { path: "/chat", icon: <IoChatbubbleEllipses className="text-[40px]" /> },
+    { path: "/notifications", icon: <FaRegBell className="text-[40px]" /> },
+    { path: "/settings", icon: <IoSettingsOutline className="text-[40px]" /> },
+  ];
 
   // Profile Upload
 
@@ -121,7 +131,7 @@ const Sidebar = () => {
   };
 
   return (
-    <section>
+    <section className="h-[800px]">
       <ToastContainer
         position="top-center"
         autoClose={3000}
@@ -148,70 +158,26 @@ const Sidebar = () => {
           {data.displayName}
         </p>
 
-        {/* Home Icon */}
-        <div className="pb-[0px]">
-          <div
-            className={`flex items-center justify-center cursor-pointer  ${
-              active === "home"
-                ? "bg-white w-[90px] text-purple-600"
-                : "text-white"
-            } rounded-lg h-[89px] w-[150px] transition-colors duration-300`}
-            onClick={() => setActive("home")}
-          >
-            <IoHomeOutline className="text-[40px]" />
-          </div>
-        </div>
-
-        {/* Chat Icon */}
-        <div className="pb-[0px]">
-          <div
-            className={`flex items-center justify-center cursor-pointer  ${
-              active === "chat"
-                ? "bg-white w-[90px] text-purple-600"
-                : "text-white"
-            } rounded-lg h-[89px] w-[150px] transition-colors duration-300`}
-            onClick={() => setActive("chat")}
-          >
-            <IoChatbubbleEllipses className="text-[40px]" />
-          </div>
-        </div>
-
-        {/* Notifications Icon */}
-        <div className="pb-[0px] ">
-          <div
-            className={`flex items-center justify-center cursor-pointer ${
-              active === "notifications"
-                ? "bg-white w-[90px] text-purple-600"
-                : "text-white"
-            } rounded-lg h-[89px] w-[150px] transition-colors duration-300`}
-            onClick={() => setActive("notifications")}
-          >
-            <FaRegBell className="text-[40px]" />
-          </div>
-        </div>
-
-        {/* Settings Icon */}
-        <div className="pb-[200px]">
-          <div
-            className={`flex items-center justify-center cursor-pointer  ${
-              active === "settings"
-                ? "bg-white w-[90px] text-purple-600"
-                : "text-white"
-            } rounded-lg h-[89px] w-[150px] transition-colors duration-300`}
-            onClick={() => setActive("settings")}
-          >
-            <IoSettingsOutline className="text-[40px]" />
-          </div>
-        </div>
-
-        {/* Logout Icon */}
-        <div className="text-white cursor-pointer">
+        {navItems.map((item) => (
+          <Link to={item.path} key={item.path}>
+            <div
+              className={`flex items-center justify-center cursor-pointer ${
+                active === item.path
+                  ? "bg-white w-[90px] text-purple-600"
+                  : "text-white"
+              } rounded-lg h-[89px] w-[150px] transition-colors duration-300`}
+              onClick={() => handleSetActive(item.path)}
+            >
+              {item.icon}
+            </div>
+          </Link>
+        ))}
+        <div className="text-white cursor-pointer mt-auto">
           <IoLogOutOutline className="text-[40px]" />
         </div>
       </div>
 
       {/*Profile Upload */}
-
       <div
         className={`fixed top-[50%] p-5 left-[50%] transform -translate-x-[50%] -translate-y-[50%] w-[700px] h-[700px] bg-[#5F35F5] rounded-lg transition-all duration-500 ${
           click ? "opacity-100 scale-100" : "opacity-0 scale-90 z-[-99999]"

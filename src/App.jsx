@@ -3,7 +3,6 @@ import Login from "./pages/Login/Login";
 import Registration from "./pages/Registration/Registration";
 import Home from "./pages/Home/Home"
 import Error from "./pages/Error/Error";
-import Sidebar from "./components/Sidebar/Sidebar";
 import PasswordReset from "./pages/PasswordReset/PasswordReset";
 import firebaseConfig from "./components/firebase/firebase.config";
 import {
@@ -12,6 +11,7 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
+import Chat from "./pages/Chat/Chat";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -21,7 +21,7 @@ const router = createBrowserRouter(
       <Route path="/login" element={<Login />}></Route>
       <Route path="/home" element={<Home />}></Route>
       <Route path="/reset" element={<PasswordReset />}></Route>
-      <Route path="/sidebar" element={<Sidebar />}></Route>
+      <Route path="/chat" element={<Chat />}></Route>
       <Route path="/*" element={<Error />}></Route>
 
     </>
